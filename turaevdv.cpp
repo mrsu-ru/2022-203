@@ -88,5 +88,5 @@ void turaevdv::lab9()
 
 std::string turaevdv::get_name()
 {
-  return "R.V. Zhalnin";
+  return "D.V. Turaev";
 }
