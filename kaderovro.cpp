@@ -88,5 +88,5 @@ void kaderovro::lab9()
 
 std::string kaderovro::get_name()
 {
-  return "R.V. Zhalnin";
+  return "R.O. Kaderov";
 }
