@@ -88,5 +88,5 @@ void ryabikinks::lab9()
 
 std::string ryabikinks::get_name()
 {
-  return "R.V. Zhalnin";
+  return "K.S.Ryabikin";
 }
