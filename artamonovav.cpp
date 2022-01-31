@@ -88,5 +88,5 @@ void artamonovav::lab9()
 
 std::string artamonovav::get_name()
 {
-  return "R.V. Zhalnin";
+  return "no Igor";
 }
