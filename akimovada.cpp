@@ -88,5 +88,5 @@ void akimovada::lab9()
 
 std::string akimovada::get_name()
 {
-  return "R.V. Zhalnin";
+  return "D. A. Akimova";
 }
