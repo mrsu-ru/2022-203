@@ -88,5 +88,5 @@ void negryame::lab9()
 
 std::string negryame::get_name()
 {
-  return "R.V. Zhalnin";
+  return "M.E. Negrya";
 }
