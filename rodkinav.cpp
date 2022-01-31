@@ -88,5 +88,5 @@ void rodkinav::lab9()
 
 std::string rodkinav::get_name()
 {
-  return "R.V. Zhalnin";
+  return "A.V. Rodkin";
 }
