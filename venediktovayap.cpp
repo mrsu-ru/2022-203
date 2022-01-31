@@ -88,5 +88,5 @@ void venediktovayap::lab9()
 
 std::string venediktovayap::get_name()
 {
-  return "R.V. Zhalnin";
+  return "Y.P.Venedikova";
 }
