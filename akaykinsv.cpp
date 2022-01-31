@@ -88,5 +88,5 @@ void akaykinsv::lab9()
 
 std::string akaykinsv::get_name()
 {
-  return "R.V. Zhalnin";
+  return "S. V. Akaikin";
 }
