@@ -59,5 +59,5 @@ class pomelovaas : public lab
 
 
   virtual std::string get_name();
-
+    return "A.S.Pomelova";
 };
