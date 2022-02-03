@@ -5,7 +5,7 @@
  */
 void nuyanzinma::lab1()
 {
-  cout << "Hello World!" << endl;
+  cout << "Hello, Nuyanzin Maksim!" << endl;
 }
 
 
