@@ -5,7 +5,7 @@
  */
 void bugreevaam::lab1()
 {
-  cout << "Hello World!" << endl;
+  cout << "Bugreeva Anna Mikhailovna" << endl;
 }
 
 
