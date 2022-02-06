@@ -88,5 +88,5 @@ void denisovrv::lab9()
 
 std::string denisovrv::get_name()
 {
-  return "R.V. Zhalnin";
+  return "R.V. Denisov";
 }
