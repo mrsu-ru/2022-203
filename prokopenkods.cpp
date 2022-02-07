@@ -88,5 +88,5 @@ void prokopenkods::lab9()
 
 std::string prokopenkods::get_name()
 {
-  return "R.V. Zhalnin";
+  return "D.S.Prokopenko";
 }
