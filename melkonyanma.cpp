@@ -88,5 +88,5 @@ void melkonyanma::lab9()
 
 std::string melkonyanma::get_name()
 {
-  return "R.V. Zhalnin";
+  return "M.A. Melkonyan";
 }
