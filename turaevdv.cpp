@@ -40,15 +40,18 @@ double ** turaevdv::createSLOUMatrix(int size) {
     return mas;
 }
 
-void isNull(double ** mas, int position, int size) {
-    int current = position;
-    while (mas[current][position] == 0 && current < size) {
+void swapToLargest(double ** mas, int position, int size) {
+    int current = position;;
+    int largestPosition = position;
+    while (current < size) {
+        if (mas[current][position] > mas[largestPosition][position] && mas[current][position] != 0) {
+            largestPosition = current;
+        }
         ++current;
     }
-    if (current == position) {
-        return;
+    if (largestPosition != position) {
+        swap(mas, size, position, largestPosition);
     }
-    swap(mas, size, position, current);
 }
 
 void swap(double ** arr, int size, int fromPosition, int toPosition) {
@@ -61,8 +64,7 @@ void swap(double ** arr, int size, int fromPosition, int toPosition) {
 
 void methodOfGauss(double ** mas, int position, int size) {
 
-    isNull(mas, position, size);
-
+    swapToLargest(mas, position, size);
     for (int i = position + 1; i < size + 1; ++i) {
         mas[position][i] = mas[position][i] / mas[position][position];
     }
