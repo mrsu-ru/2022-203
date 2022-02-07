@@ -88,5 +88,5 @@ void makarovaayu::lab9()
 
 std::string makarovaayu::get_name()
 {
-  return "R.V. Zhalnin";
+  return "A.U.Makarova";
 }
