@@ -3,6 +3,7 @@
 using namespace std;
 
 void methodOfGauss(double ** mas, int position, int size);
+void swap(double ** arr, int size, int fromPosition, int toPosition);
 double ** arr;
 
 /**
@@ -47,10 +48,14 @@ void isNull(double ** mas, int position, int size) {
     if (current == position) {
         return;
     }
-    for (int i = position; i < size + 1; ++i) {
-        mas[position][i] += mas[current][i];
-        mas[current][i] = mas[position][i] - mas[current][i];
-        mas[position][i] -= mas[current][i];
+    swap(mas, size, position, current);
+}
+
+void swap(double ** arr, int size, int fromPosition, int toPosition) {
+    for (int i = fromPosition; i < size + 1; ++i) {
+        arr[fromPosition][i] += arr[toPosition][i];
+        arr[toPosition][i] = arr[toPosition][i] - arr[toPosition][i];
+        arr[fromPosition][i] -= arr[toPosition][i];
     }
 }
 
