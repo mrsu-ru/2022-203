@@ -17,6 +17,7 @@ void refactorRow(double **&matrix, double *&parameters, int size, int numRow, do
     for (int i = 0; i < size; ++i) {
         matrix[numRow][i] /= num;
     }
+
     parameters[numRow] /= num;
 }
 
@@ -28,8 +29,39 @@ void subtract(double **&matrix, double *&parameters, int size, int numMainRow, i
     parameters[numSubtractedRow] -= parameters[numMainRow];
 }
 
+void swapRows(double **&matrix, double *&parameters, int size, int numRow1, int numRow2) {
+    for (int i = 0; i < size; ++i) {
+        double d = matrix[numRow1][i];
+        matrix[numRow1][i] = matrix[numRow2][i];
+        matrix[numRow2][i] = d;
+    }
+
+    double d = parameters[numRow1];
+    parameters[numRow1] = parameters[numRow2];
+    parameters[numRow2] = d;
+}
+
+int searchRow(double **&matrix, int size, int numBeginRow, int numColumn) {
+    for (int i = numBeginRow; i < size; ++i) {
+        if (matrix[i][numColumn] != 0) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 void firstPart(double **&matrix, double *&parameters, int size, int pos) {
-    if (matrix[pos][pos] != 1) {
+    int t = pos;
+    if (matrix[t][t] == 0) {
+        t = searchRow(matrix, size, t, pos);
+
+        if (t != -1) {
+            swapRows(matrix, parameters, size, t, pos);
+        }
+    }
+
+    if ((matrix[pos][pos] != 1) && (matrix[pos][pos] != 0)) {
         refactorRow(matrix, parameters, size, pos, matrix[pos][pos]);
     }
 
