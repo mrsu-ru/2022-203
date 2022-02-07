@@ -88,5 +88,5 @@ void fedinda::lab9()
 
 std::string fedinda::get_name()
 {
-  return "R.V. Zhalnin";
+  return "D.A. Fedin";
 }
