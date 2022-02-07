@@ -105,6 +105,13 @@ void artamonovav::lab2()
         firstPart(A, b, N, i);
     }
 
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
+            cout << A[i][j] << "\t";
+        }
+        cout << endl;
+    }
+
     for (int i = N - 1; i >= 0; --i) {
         lastPart(A, b, N, i);
     }
@@ -122,7 +129,16 @@ void artamonovav::lab2()
  */
 void artamonovav::lab3()
 {
+    for (int i = 1; i < N; ++i) {
+        b[i] -= A[i][i - 1] / A[i - 1][i - 1] * b[i - 1];
 
+        A[i][i] -= A[i][i - 1] / A[i - 1][i - 1] * A[i - 1][i];
+    }
+
+    x[N - 1] = b[N - 1] / A[N - 1][N - 1];
+    for (int i = N - 1; i >= 0; --i) {
+        x[i] = (b[i] - A[i][i + 1] * x[i + 1]) / A[i][i];
+    }
 }
 
 
