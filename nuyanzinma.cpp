@@ -5,7 +5,7 @@
  */
 void nuyanzinma::lab1()
 {
-  cout << "Hello, Nuyanzin Maksim!" << endl;
+  cout << "Hello World!" << endl;
 }
 
 
@@ -88,5 +88,5 @@ void nuyanzinma::lab9()
 
 std::string nuyanzinma::get_name()
 {
-  return "R.V. Zhalnin";
+  return "M.A. Nuyanzin";
 }
