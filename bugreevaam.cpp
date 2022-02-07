@@ -5,7 +5,7 @@
  */
 void bugreevaam::lab1()
 {
-  cout << "Bugreeva Anna Mikhailovna" << endl;
+  cout << "Hello World!" << endl;
 }
 
 
@@ -88,5 +88,5 @@ void bugreevaam::lab9()
 
 std::string bugreevaam::get_name()
 {
-  return "R.V. Zhalnin";
+  return "A.M.Bugreeva";
 }
