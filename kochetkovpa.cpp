@@ -88,5 +88,5 @@ void kochetkovpa::lab9()
 
 std::string kochetkovpa::get_name()
 {
-  return "R.V. Zhalnin";
+  return "P.A. Kochetkov";
 }
