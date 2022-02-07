@@ -100,7 +100,26 @@ void nuyanzinma::lab2()
  */
 void nuyanzinma::lab3()
 {
-	cout << 45 << endl;
+	double* Vk = new double[N];
+	double* Uk = new double[N];
+
+	Vk[0] = A[0][1] / -A[0][0];
+	Uk[0] = b[0] / A[0][0];
+
+	for (int i = 1; i < N - 1; i++)
+	{
+		Vk[i] = A[i][i + 1] / (-A[i][i] - A[i][i - 1] * Vk[i - 1]);
+		Uk[i] = (A[i][i - 1] * Uk[i - 1] - b[i]) / (-A[i][i] - A[i][i - 1] * Vk[i - 1]);
+	}
+
+	Vk[N - 1] = 0;
+	Uk[N - 1] = (A[N - 1][N - 2] * Uk[N - 2] - b[N - 1]) / (-A[N - 1][N - 1] - A[N - 1][N - 2] * Vk[N - 2]);
+
+	x[N - 1] = Uk[N - 1];
+	for (int i = N - 1; i > 0; i--)
+	{
+		x[i - 1] = Vk[i - 1] * x[i] + Uk[i - 1];
+	}
 }
 
 
