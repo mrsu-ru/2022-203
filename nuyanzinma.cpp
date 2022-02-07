@@ -88,5 +88,5 @@ void nuyanzinma::lab9()
 
 std::string nuyanzinma::get_name()
 {
-  return "R.V. Zhalnin";
+  return "M.A. Nuyanzin";
 }
