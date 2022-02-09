@@ -51,7 +51,7 @@ int searchRow(double **&matrix, int size, int numBeginRow, int numColumn) {
     return -1;
 }
 
-void firstPart(double **&matrix, double *&parameters, int size, int pos) {
+void firstPartOfGaussAlgorithm(double **&matrix, double *&parameters, int size, int pos) {
     int t = pos;
     if (matrix[t][t] == 0) {
         t = searchRow(matrix, size, t, pos);
@@ -78,7 +78,7 @@ void firstPart(double **&matrix, double *&parameters, int size, int pos) {
     }
 }
 
-void lastPart(double **&matrix, double *&parameters, int size, int pos) {
+void lastPartOfGaussAlgorithm(double **&matrix, double *&parameters, int size, int pos) {
     if (matrix[pos][pos] != 1) {
         refactorRow(matrix, parameters, size, pos, matrix[pos][pos]);
     }
@@ -99,36 +99,24 @@ void lastPart(double **&matrix, double *&parameters, int size, int pos) {
 /**
  * Метод Гаусса с выбором главного элемента
  */
-void artamonovav::lab2()
-{
+void artamonovav::lab2() {
     for (int i = 0; i < N; ++i) {
-        firstPart(A, b, N, i);
-    }
-
-    for (int i = 0; i < N; ++i) {
-        for (int j = 0; j < N; ++j) {
-            cout << A[i][j] << "\t";
-        }
-        cout << endl;
+        firstPartOfGaussAlgorithm(A, b, N, i);
     }
 
     for (int i = N - 1; i >= 0; --i) {
-        lastPart(A, b, N, i);
+        lastPartOfGaussAlgorithm(A, b, N, i);
     }
 
     for (int i = 0; i < N; ++i) {
         x[i] = b[i];
     }
-
 }
-
-
 
 /**
  * Метод прогонки
  */
-void artamonovav::lab3()
-{
+void artamonovav::lab3() {
     for (int i = 1; i < N; ++i) {
         b[i] -= A[i][i - 1] / A[i - 1][i - 1] * b[i - 1];
 
@@ -141,17 +129,56 @@ void artamonovav::lab3()
     }
 }
 
-
-
 /**
  * Метод Холецкого
  */
-void artamonovav::lab4()
-{
 
+void artamonovav::lab4() {
+    double **l = new double*[N];
+    double **transposeL = new double*[N];
+
+    for (int i = 0; i < N; ++i) {
+        l[i] = new double[N];
+        transposeL[i] = new double[N];
+    }
+
+    l[0][0] = sqrt(A[0][0]);
+    transposeL[0][0] = l[0][0];
+    for (int i = 1; i < N; ++i) {
+        l[i][0] = A[i][0] / l[0][0];
+        transposeL[0][i] = l[i][0];
+    }
+
+    for (int i = 1; i < N; ++i) {
+        double sum = 0;
+        for (int j = 0; j < i; ++j) {
+            sum += l[i][j] * l[i][j];
+        }
+        l[i][i] = sqrt(A[i][i] - sum);
+        transposeL[i][i] = l[i][i];
+
+        for (int j = i; j < N; ++j) {
+            sum = 0;
+            for (int k = 0; k < i; ++k) {
+                sum += l[i][k] * l[j][k];
+            }
+            l[j][i] = (A[j][i] - sum) / l[i][i];
+            transposeL[i][j] = l[j][i];
+        }
+    }
+
+    for (int i = 0; i < N; ++i) {
+        firstPartOfGaussAlgorithm(l, b, N, i);
+    }
+
+    for (int i = N - 1; i >= 0; --i) {
+        lastPartOfGaussAlgorithm(transposeL, b, N, i);
+    }
+
+    for (int i = 0; i < N; ++i) {
+        x[i] = b[i];
+    }
 }
-
-
 
 /**
  * Метод Якоби или Зейделя
