@@ -119,7 +119,6 @@ void artamonovav::lab2() {
 void artamonovav::lab3() {
     for (int i = 1; i < N; ++i) {
         b[i] -= A[i][i - 1] / A[i - 1][i - 1] * b[i - 1];
-
         A[i][i] -= A[i][i - 1] / A[i - 1][i - 1] * A[i - 1][i];
     }
 
@@ -134,45 +133,45 @@ void artamonovav::lab3() {
  */
 
 void artamonovav::lab4() {
-    double **l = new double*[N];
-    double **transposeL = new double*[N];
+    double **matrixL = new double*[N];
+    double **transposeMatrixL = new double*[N];
 
     for (int i = 0; i < N; ++i) {
-        l[i] = new double[N];
-        transposeL[i] = new double[N];
+        matrixL[i] = new double[N];
+        transposeMatrixL[i] = new double[N];
     }
 
-    l[0][0] = sqrt(A[0][0]);
-    transposeL[0][0] = l[0][0];
+    matrixL[0][0] = sqrt(A[0][0]);
+    transposeMatrixL[0][0] = matrixL[0][0];
     for (int i = 1; i < N; ++i) {
-        l[i][0] = A[i][0] / l[0][0];
-        transposeL[0][i] = l[i][0];
+        matrixL[i][0] = A[i][0] / matrixL[0][0];
+        transposeMatrixL[0][i] = matrixL[i][0];
     }
 
     for (int i = 1; i < N; ++i) {
         double sum = 0;
         for (int j = 0; j < i; ++j) {
-            sum += l[i][j] * l[i][j];
+            sum += matrixL[i][j] * matrixL[i][j];
         }
-        l[i][i] = sqrt(A[i][i] - sum);
-        transposeL[i][i] = l[i][i];
+        matrixL[i][i] = sqrt(A[i][i] - sum);
+        transposeMatrixL[i][i] = matrixL[i][i];
 
         for (int j = i; j < N; ++j) {
             sum = 0;
             for (int k = 0; k < i; ++k) {
-                sum += l[i][k] * l[j][k];
+                sum += matrixL[i][k] * matrixL[j][k];
             }
-            l[j][i] = (A[j][i] - sum) / l[i][i];
-            transposeL[i][j] = l[j][i];
+            matrixL[j][i] = (A[j][i] - sum) / matrixL[i][i];
+            transposeMatrixL[i][j] = matrixL[j][i];
         }
     }
 
     for (int i = 0; i < N; ++i) {
-        firstPartOfGaussAlgorithm(l, b, N, i);
+        firstPartOfGaussAlgorithm(matrixL, b, N, i);
     }
 
     for (int i = N - 1; i >= 0; --i) {
-        lastPartOfGaussAlgorithm(transposeL, b, N, i);
+        lastPartOfGaussAlgorithm(transposeMatrixL, b, N, i);
     }
 
     for (int i = 0; i < N; ++i) {
