@@ -2,11 +2,9 @@
 
 using namespace std;
 
-void methodOfGauss(double **mas, int position, int size);
-
-void swap(double **arr, int size, int fromPosition, int toPosition);
-
-double **arr;
+void methodOfGauss(double ** mas, int position, int size);
+void swap(double ** arr, int size, int fromPosition, int toPosition);
+double ** arr;
 
 /**
  * Введение в дисциплину
@@ -93,7 +91,19 @@ void methodOfGauss(double **mas, int position, int size) {
  * Метод прогонки
  */
 void turaevdv::lab3() {
+    b[0] /= A[0][0];
+    A[0][0] = -A[0][1]/A[0][0];
+    for (int i = 1; i < N - 1; ++i) {
+        double y = A[i][i] + A[i][i-1]*A[i-1][i-1];
+        A[i][i] = -A[i][i+1]/y;
+        b[i] = (b[i] - A[i][i-1]*b[i-1])/y;
+    }
 
+    x[N-1] = (b[N-1] - A[N-1][N-2]*b[N-2]) / (A[N-1][N-1] + A[N-1][N-2] * A[N-2][N-2]);
+
+    for (int i = N - 2; i >= 0; --i) {
+        x[i] = x[i+1] * A[i][i] + b[i];
+    }
 }
 
 
@@ -182,23 +192,28 @@ void reverse(double **mas, int size) {
 /**
  * Метод Якоби или Зейделя
  */
-void turaevdv::lab5() {
+void turaevdv::lab5()
+{
 
 }
+
 
 
 /**
  * Метод минимальных невязок
  */
-void turaevdv::lab6() {
+void turaevdv::lab6()
+{
 
 }
+
 
 
 /**
  * Метод сопряженных градиентов
  */
-void turaevdv::lab7() {
+void turaevdv::lab7()
+{
 
 }
 
@@ -206,7 +221,8 @@ void turaevdv::lab7() {
 /**
  * Метод вращения для нахождения собственных значений матрицы
  */
-void turaevdv::lab8() {
+void turaevdv::lab8()
+{
 
 }
 
@@ -214,11 +230,13 @@ void turaevdv::lab8() {
 /**
  * Нахождение наибольшего по модулю собственного значения матрицы
  */
-void turaevdv::lab9() {
+void turaevdv::lab9()
+{
 
 }
 
 
-std::string turaevdv::get_name() {
-    return "D.V. Turaev";
+std::string turaevdv::get_name()
+{
+  return "D.V. Turaev";
 }
