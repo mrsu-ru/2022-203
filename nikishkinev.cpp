@@ -14,7 +14,7 @@ void nikishkinev::lab1()
  */
 void nikishkinev::lab2()
 {
-    int swaps[2 * N];
+    int* swaps = new int[N];
     for (int i = 0; i < N; i++) {
         int m = i;
         for (int j = i + 1; j < N; j++) {
@@ -24,8 +24,7 @@ void nikishkinev::lab2()
         }
         swap(A[i], A[m]);
         swap(b[i], b[m]);
-        swaps[2 * i] = i;
-        swaps[2 * i + 1] = m;
+        swaps[i] = m;
 
         for (int j = i + 1; j < N; j++) {
             A[i][j] /= A[i][i];
@@ -49,13 +48,13 @@ void nikishkinev::lab2()
         }
     }
 
-    for (int i = 2 * N - 1; i >= 0; i -= 2) {
-        swap(A[swaps[i]], A[swaps[i - 1]]);
-        swap(b[swaps[i]], b[swaps[i - 1]]);
+    for (int i = N - 1; i >= 0; i--) {
+        swap(b[swaps[i]], b[i]);
     }
     for (int i = 0; i < N; i++) {
         x[i] = b[i];
     }
+    delete[] swaps;
 }
 
 
@@ -65,8 +64,8 @@ void nikishkinev::lab2()
  */
 void nikishkinev::lab3()
 {
-    double alpha[N];
-    double beta[N];
+    double* alpha = new double[N];
+    double* beta = new double[N];
     alpha[0] = A[0][1] / A[0][0];
     beta[0] = b[0] / A[0][0];
 
@@ -80,7 +79,8 @@ void nikishkinev::lab3()
     for (int i = N - 2; i >= 0; i--) {
         x[i] = beta[i] - alpha[i] * x[i + 1];
     }
-
+    delete[] alpha;
+    delete[] beta;
 }
 
 
@@ -90,8 +90,11 @@ void nikishkinev::lab3()
  */
 void nikishkinev::lab4()
 {
-    double S[N][N];
-    double D[N];
+    double** S = new double*[N];
+    for (int i = 0; i < N; i++) {
+        S[i] = new double[N];
+    }
+    double* D = new double[N];
 
     for (int i = 0; i < N; i++) {
         for (int l = 0; l < i; l++) {
@@ -122,7 +125,11 @@ void nikishkinev::lab4()
         x[i] = b[i] / S[i][i];
     }
 
-
+    for (int i = 0; i < N; i++) {
+        delete[] S[i];
+    }
+    delete[] S;
+    delete[] D;
 }
 
 
@@ -132,7 +139,22 @@ void nikishkinev::lab4()
  */
 void nikishkinev::lab5()
 {
-
+    double EPS = 1e-15;
+    double* newX = new double[N];
+    double length = 0;
+    do {
+        length = 0;
+        for (int i = 0; i < N; i++) {
+            newX[i] = b[i];
+            for (int j = 0; j < i; j++) {
+                newX[i] -= A[i][j] * x[j];
+            }
+            newX[i] /= A[i][i];
+            length += (newX[i] - x[i]) * (newX[i] - x[i]);
+            x[i] = newX[i];
+        }
+    } while (length > EPS);
+    delete[] newX;
 }
 
 
