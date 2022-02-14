@@ -182,9 +182,42 @@ void artamonovav::lab4() {
 /**
  * Метод Якоби или Зейделя
  */
-void artamonovav::lab5()
-{
+void artamonovav::lab5() {
+    double * x1 = new double[N];
 
+    for (int i = 0; i < N; ++i) {
+        x1[i] = b[i];
+    }
+
+    double eps = 1.e-25;
+    double norm = 0;
+
+    do {
+        for (int i = 0; i < N; ++i) {
+            x[i] = x1[i];
+        }
+
+        for (int i = 0; i < N; ++i) {
+            double sum = 0;
+            for (int j = 0; j < N; ++j) {
+                if (i != j) {
+                    sum += A[i][j] * x1[j];
+                }
+            }
+            x[i] = (b[i] - sum) / A[i][i];
+        }
+
+        norm = fabs(x1[0] - x[0]);
+        for (int i = 1; i < N; ++i) {
+            if (norm < fabs(x1[i] - x[i])) {
+                norm = fabs(x1[i] - x[i]);
+            }
+        }
+
+        for (int i = 0; i < N; ++i) {
+            x1[i] = x[i];
+        }
+    } while (norm >= eps);
 }
 
 
