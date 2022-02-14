@@ -88,5 +88,5 @@ void melyakinev::lab9()
 
 std::string melyakinev::get_name()
 {
-  return "R.V. Zhalnin";
+  return "E.V. Melyakin";
 }
