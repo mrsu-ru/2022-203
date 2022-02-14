@@ -53,7 +53,6 @@ void akimovada::lab2()
 		}
 	}
 
-	double x[N];
 	for (int i = 0; i < N; i++) {
 		x[i] = b[i];
 	}
