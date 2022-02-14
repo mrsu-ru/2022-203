@@ -1,3 +1,0 @@
-/Users/egormelyakin/Desktop/semester_4/git/2022-203/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/Users/egormelyakin/Desktop/semester_4/git/2022-203/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/egormelyakin/Desktop/semester_4/git/2022-203/cmake-build-debug/CMakeFiles/vvm.dir
