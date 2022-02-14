@@ -26,9 +26,11 @@ void akimovada::lab2()
 				k++;
 		}
 
-		for (int j = 0; j < N; j++)
-		{
-			swap(A[i][j], A[k][j]);
+		if (k != i){
+			for (int j = 0; j < N; j++)
+			{
+				swap(A[i][j], A[k][j]);
+			}
 		}
 
 		double main_element = A[i][i];
