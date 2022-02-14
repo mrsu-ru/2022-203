@@ -14,7 +14,6 @@ void ryabikinks::lab1()
  */
 void ryabikinks::lab2()
 {
-    double const eps = 1e-12;
     int i = 0;
     while (i < N) {
         int maxColumn = i;
@@ -33,9 +32,6 @@ void ryabikinks::lab2()
                 A[j][k] -= (ratio * A[i][k]);
             }
             b[j] -= (ratio * b[i]);
-            if (abs(b[j]) < eps) {
-                b[j] = 0;
-            }
         }
         i++;
     }
@@ -45,9 +41,6 @@ void ryabikinks::lab2()
             b[i] -= (A[i][j] * x[j]);
         }
         x[i] = b[i] / A[i][i];
-        if (abs(x[i]) < eps) {
-            x[i] = 0;
-        }
     }
 }
 
