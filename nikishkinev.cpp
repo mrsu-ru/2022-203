@@ -88,5 +88,5 @@ void nikishkinev::lab9()
 
 std::string nikishkinev::get_name()
 {
-  return "R.V. Zhalnin";
+  return "E.V. Nikishkin";
 }
