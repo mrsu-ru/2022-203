@@ -14,7 +14,34 @@ void ryabikinks::lab1()
  */
 void ryabikinks::lab2()
 {
+    int i = 0;
+    while (i < N) {
+        int maxColumn = i;
+        for (int j = i + 1; j < N; j++) {
+            if (abs(A[j][i]) > abs(A[maxColumn][i])) {
+                maxColumn = j;
+            }
+        }
+        if (maxColumn != i) {
+            swap(A[i], A[maxColumn]);
+            swap(b[i], b[maxColumn]);
+        }
+        for (int j = i + 1; j < N; j++) {
+            double ratio = A[j][i] / A[i][i];
+            for (int k = i; k < N; k++) {
+                A[j][k] -= (ratio * A[i][k]);
+            }
+            b[j] -= (ratio * b[i]);
+        }
+        i++;
+    }
 
+    for (int i = N - 1; i >= 0; i--) {
+        for (int j = i + 1; j < N; j++) {
+            b[i] -= (A[i][j] * x[j]);
+        }
+        x[i] = b[i] / A[i][i];
+    }
 }
 
 
