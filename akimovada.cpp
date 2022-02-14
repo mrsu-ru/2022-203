@@ -14,6 +14,49 @@ void akimovada::lab1()
  */
 void akimovada::lab2()
 {
+    int position = 0;
+	for (int i = 0; i < N; i++)
+	{
+		int k = i;
+		while (A[k][i] == 0)
+		{
+			if (k == N - 1)
+				break;
+			else
+				k++;
+		}
+
+		for (int j = 0; j < N; j++)
+		{
+			swap(A[i][j], A[k][j]);
+		}
+
+		double main_element = A[i][i];
+		for (int j = 0; j < N; j++)
+		{
+			A[i][j] /= main_element;
+		}
+
+		b[i] /= main_element;
+		for (int j = 0; j < N; j++)
+		{
+			if (j != i)
+			{
+				double main_div = -A[j][i];
+				for (int z = 0; z < N; z++)
+				{
+					A[j][z] += main_div * A[i][z];
+				}
+
+				b[j] += main_div * b[i];
+			}
+		}
+	}
+
+	double x[N];
+	for (int i = 0; i < N; i++) {
+		x[i] = b[i];
+	}
 
 }
 
