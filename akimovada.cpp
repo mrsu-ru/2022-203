@@ -14,7 +14,7 @@ void akimovada::lab1()
  */
 void akimovada::lab2()
 {
-    int position = 0;
+    //int position = 0;
 	for (int i = 0; i < N; i++)
 	{
 		int k = i;
