@@ -220,14 +220,70 @@ void artamonovav::lab5() {
     } while (norm >= eps);
 }
 
+double * getMulMatrixOnVector(double **&matrix, double *&vector, int size) {
+    double * result = new double[size];
 
+    for (int i = 0; i < size; ++i) {
+        result[i] = 0;
+        for (int j = 0; j < size; ++j) {
+            result[i] += matrix[i][j] * vector[j];
+        }
+    }
+
+    return result;
+}
 
 /**
  * Метод минимальных невязок
  */
-void artamonovav::lab6()
-{
+void artamonovav::lab6() {
+    double * x1 = new double[N];
 
+    for (int i = 0; i < N; ++i) {
+        x1[i] = b[i];
+    }
+
+    double eps = 1.e-19;
+    double *r = new double[N];
+    double norm;
+
+    do {
+        for (int i = 0; i < N; ++i) {
+            x[i] = x1[i];
+        }
+
+        double * A_x = getMulMatrixOnVector(A, x, N);
+
+        for (int i = 0; i < N; ++i) {
+            r[i] = A_x[i] - b[i];
+        }
+
+        double * A_r = getMulMatrixOnVector(A, r, N);
+
+        double t = 0;
+        double sum = 0;
+        for (int i = 0; i < N; ++i) {
+            t += A_r[i] * r[i];
+            sum += pow(A_r[i], 2);
+        }
+
+        t /= sum;
+
+        for (int i = 0; i < N; ++i) {
+            x[i] = x1[i] - t * r[i];
+        }
+
+        norm = fabs(x1[0] - x[0]);
+        for (int i = 1; i < N; ++i) {
+            if (norm < fabs(x1[i] - x[i])) {
+                norm = fabs(x1[i] - x[i]);
+            }
+        }
+
+        for (int i = 0; i < N; ++i) {
+            x1[i] = x[i];
+        }
+    } while (norm >= eps);
 }
 
 
