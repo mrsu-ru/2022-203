@@ -18,12 +18,12 @@ void akimovada::lab2()
 	for (int i = 0; i < N; i++)
 	{
 		int k = i;
-		while (A[k][i] == 0)
+		for (int q = i + 1; q < N; q++)
 		{
-			if (k == N - 1)
-				break;
-			else
-				k++;
+			if (A[k][i] < A[q][i] && A[k][i] == 0)
+			{
+				k = q;
+			}
 		}
 
 		if (k != i){
