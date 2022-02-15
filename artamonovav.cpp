@@ -286,14 +286,68 @@ void artamonovav::lab6() {
     } while (norm >= eps);
 }
 
+double getScalarMul(double *&vec1, double *&vec2, int count) {
+    double result = 0;
 
+    for (int i = 0; i < count; ++i) {
+        result += vec1[i] * vec2[i];
+    }
+
+    return result;
+}
 
 /**
  * Метод сопряженных градиентов
  */
-void artamonovav::lab7()
-{
+void artamonovav::lab7() {
+    double * x1 = new double[N];
 
+    for (int i = 0; i < N; ++i) {
+        x1[i] = b[i];
+    }
+
+    double eps = 1.e-25;
+    double * r = new double[N];
+    double * z = new double[N];
+    double norm;
+
+    double * A_x = getMulMatrixOnVector(A, x1, N);
+
+    for (int i = 0; i < N; ++i) {
+        r[i] = b[i] - A_x[i];
+        z[i] = r[i];
+    }
+
+    do {
+        double * A_z = getMulMatrixOnVector(A, z, N);
+
+        double alpha = getScalarMul(r, r, N) / getScalarMul(A_z, z, N);
+
+        double * r1 = new double[N];
+
+        for (int i = 0; i < N; ++i) {
+            x[i] = x1[i] + alpha * z[i];
+            r1[i] = r[i] - alpha * A_z[i];
+        }
+
+        double beta = getScalarMul(r1, r1, N) / getScalarMul(r, r, N);
+
+        for (int i = 0; i < N; ++i) {
+            z[i] = r1[i] + beta * z[i];
+            r[i] = r1[i];
+        }
+
+        norm = fabs(x1[0] - x[0]);
+        for (int i = 1; i < N; ++i) {
+            if (norm < fabs(x1[i] - x[i])) {
+                norm = fabs(x1[i] - x[i]);
+            }
+        }
+
+        for (int i = 0; i < N; ++i) {
+            x1[i] = x[i];
+        }
+    } while (norm >= eps);
 }
 
 
