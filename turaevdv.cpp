@@ -218,13 +218,59 @@ void turaevdv::lab5() {
 }
 
 
-
+double* mulMatrixOnVector(double** matrix, double* vector, int size);
 /**
  * Метод минимальных невязок
  */
-void turaevdv::lab6()
-{
+void turaevdv::lab6() {
+    double * nextVectorX = new double[N];
 
+    for (int i = 0; i < N; ++i) {
+        nextVectorX[i] = b[i];
+    }
+
+    double eps = 1.e-19;
+    double *r = new double[N];
+    double norm;
+
+    do {
+        double * mulMatrixAOnX = mulMatrixOnVector(A, x, N);
+
+        for (int i = 0; i < N; ++i) {
+            r[i] = mulMatrixAOnX[i] - b[i];
+        }
+
+        double * mulMatrixOnR = mulMatrixOnVector(A, r, N);
+
+        double t = 0;
+        double sum = 0;
+        for (int i = 0; i < N; ++i) {
+            t += mulMatrixOnR[i] * r[i];
+            sum += pow(mulMatrixOnR[i], 2);
+        }
+
+        t /= sum;
+
+        norm = 0;
+        for (int i = 0; i < N; ++i) {
+            x[i] = nextVectorX[i] - t * r[i];
+            if (norm < fabs(nextVectorX[i] - x[i])) {
+                norm = fabs(nextVectorX[i] - x[i]);
+            }
+            nextVectorX[i] = x[i];
+        }
+    } while (norm >= eps);
+}
+
+double* mulMatrixOnVector(double** matrix, double* vector, int size) {
+    double* result = new double [size];
+    for (int i = 0; i < size; ++i) {
+        result[i] = 0;
+        for (int j = 0; j < size; ++j) {
+            result[i] += matrix[i][j] * vector[j];
+        }
+    }
+    return result;
 }
 
 
