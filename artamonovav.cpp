@@ -220,6 +220,7 @@ void artamonovav::lab5() {
     } while (norm >= eps);
 }
 
+
 double * getMulMatrixOnVector(double **&matrix, double *&vector, int size) {
     double * result = new double[size];
 
@@ -286,6 +287,7 @@ void artamonovav::lab6() {
     } while (norm >= eps);
 }
 
+
 double getScalarMul(double *&vec1, double *&vec2, int count) {
     double result = 0;
 
@@ -351,25 +353,157 @@ void artamonovav::lab7() {
 }
 
 
+double ** getMulOfMatrixes(double **&matrix1, double **&matrix2, int count) {
+    double ** result = new double * [count];
+    for (int i = 0; i < count; ++i) {
+        result[i] = new double[count];
+    }
+
+    for (int i = 0; i < count; ++i) {
+        for (int j = 0; j < count; ++j) {
+            result[i][j] = 0;
+            for (int k = 0; k < count; ++k) {
+                result[i][j] += matrix1[i][k] * matrix2[k][j];
+            }
+        }
+    }
+
+    return result;
+}
+
+double ** getTransposeMatrix(double **&matrix, int count) {
+    double ** result = new double * [count];
+    for (int i = 0; i < count; ++i) {
+        result[i] = new double[count];
+    }
+
+    for (int i = 0; i < count; ++i) {
+        for (int j = 0; j < count; ++j) {
+            result[i][j] = matrix[j][i];
+        }
+    }
+
+    return result;
+}
+
+void printMatrix(double **&matrix, int count) {
+    for (int i = 0; i < count; ++i) {
+        for (int j = 0; j < count; ++j) {
+            cout << matrix[i][j] << "\t";
+        }
+        cout << endl;
+    }
+    cout << endl;
+    cout << endl;
+}
+
 /**
  * Метод вращения для нахождения собственных значений матрицы
  */
-void artamonovav::lab8()
-{
+void artamonovav::lab8() {
+    double eps = 1.e-1;
+    double norm;
 
+    do {
+        norm = 0;
+        int iOfMaxElem = 0, jOfMaxElem = 0;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if (i < j) {
+                    if (norm < fabs(A[i][j])) {
+                        norm = fabs(A[i][j]);
+                        iOfMaxElem = i;
+                        jOfMaxElem = j;
+                    }
+                }
+            }
+        }
+
+        double sinPhi, cosPhi;
+
+        if (A[iOfMaxElem][iOfMaxElem] != A[jOfMaxElem][jOfMaxElem]) {
+            double p = 2 * A[iOfMaxElem][jOfMaxElem] / (A[iOfMaxElem][iOfMaxElem] - A[jOfMaxElem][jOfMaxElem]);
+
+            double p1 = pow(1 + p * p, 0.5);
+
+            sinPhi = ((p < 0) ? -1 : 1) * pow(0.5 * (1 - 1 / p1), 0.5);
+            cosPhi = pow(0.5 * (1 + 1 / p1), 0.5);
+        } else {
+            sinPhi = sin(M_PI / 4);
+            cosPhi = cos(M_PI / 4);
+        }
+
+        double ** matrixH = new double * [N];
+        for (int i = 0; i < N; ++i) {
+            matrixH[i] = new double[N];
+        }
+
+        for (int i = 0; i < N; ++i) {
+            for (int j = 0; j < N; ++j) {
+                if (i == j) {
+                    matrixH[i][j] = 1;
+                } else {
+                    matrixH[i][j] = 0;
+                }
+            }
+        }
+
+        matrixH[iOfMaxElem][jOfMaxElem] = -sinPhi;
+        matrixH[jOfMaxElem][iOfMaxElem] = sinPhi;
+
+        matrixH[iOfMaxElem][iOfMaxElem] = cosPhi;
+        matrixH[jOfMaxElem][jOfMaxElem] = cosPhi;
+
+        double ** transposeH = getTransposeMatrix(matrixH, N);
+
+        double ** transposeHMultipliedByA = getMulOfMatrixes(transposeH, A, N);
+
+        A = getMulOfMatrixes(transposeHMultipliedByA, matrixH, N);
+    } while (norm >= eps);
+
+    for (int i = 0; i < N; ++i) {
+        cout << A[i][i] << endl;
+    }
 }
-
 
 /**
  * Нахождение наибольшего по модулю собственного значения матрицы
  */
-void artamonovav::lab9()
-{
+void artamonovav::lab9() {
+    double maxEigenvalueModulo;
+    double num = 0;
+    double eps = 1.e-10;
 
+    double * x1 = new double[N];
+    for (int i = 0; i < N; ++i) {
+        x1[i] = b[i];
+    }
+
+    do {
+        maxEigenvalueModulo = num;
+
+        for (int i = 0; i < N; ++i) {
+            x[i] = x1[i];
+        }
+
+        x1 = getMulMatrixOnVector(A, x, N);
+
+        double sum1 = 0, sum2 = 0;
+        for (int i = 0; i < N; ++i) {
+            sum1 += x1[i];
+            sum2 += x[i];
+        }
+        num = sum1 / sum2;
+
+        double r = pow(getScalarMul(x1, x1, N), 0.5);
+        for (int i = 0; i < N; ++i) {
+            x1[i] /= r;
+        }
+    } while (fabs(num - maxEigenvalueModulo) >= eps);
+
+    cout << "Max Eigenvalue Modulo: " << maxEigenvalueModulo << endl;
 }
 
-
-std::string artamonovav::get_name()
-{
+std::string artamonovav::get_name() {
   return "Artamonov Alexey";
 }
