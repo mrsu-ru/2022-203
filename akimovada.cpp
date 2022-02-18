@@ -14,13 +14,12 @@ void akimovada::lab1()
  */
 void akimovada::lab2()
 {
-    int position = 0;
 	for (int i = 0; i < N; i++)
 	{
 		int k = i;
 		for (int q = i + 1; q < N; q++)
 		{
-			if (A[k][i] < A[q][i] && A[k][i] == 0)
+			if (abs(A[k][i]) < abs(A[q][i]) || A[k][i] == 0)
 			{
 				k = q;
 			}
@@ -30,6 +29,7 @@ void akimovada::lab2()
 			for (int j = 0; j < N; j++)
 			{
 				swap(A[i][j], A[k][j]);
+                swap(b[i], b[k]);
 			}
 		}
 
