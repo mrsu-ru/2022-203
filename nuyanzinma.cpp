@@ -1,5 +1,4 @@
 ﻿#include "nuyanzinma.h"
-#include <fstream>
 
 /**
  * Введение в дисциплину
@@ -283,7 +282,6 @@ double* productOfMatrixAndVector(int N, double**& A, double*& d)
  */
 void nuyanzinma::lab5()
 {
-	ofstream out1("new1.txt");
 	double** D = new double* [N];
 	double** Drev = new double* [N];
 	double** DminusA = new double* [N];
