@@ -206,7 +206,55 @@ void akimovada::lab4()
  */
 void akimovada::lab5()
 {
+    double eps = 1.e-20;
+    double **B = new double*[N];
+    for (int i = 0; i < N; i++)
+    {
+        B[i] = new double[N];
+        for (int j = 0; j < N; j++)
+        {
+            if (i == j)
+            {
+                B[i][i] = 0;
+            }
+            else
+            {
+                B[i][j] = -A[i][j] / A[i][i];
+            }
+        }
+    }
 
+    double *d = new double[N];
+    for (int i = 0; i < N; i++)
+    {
+        d[i] = b[i] / A[i][i];
+    }
+
+    double *x = new double[N];
+    double norm;
+    do {
+        for (int i = 0; i < N; i++)
+        {
+            double temp = 0;
+            for (int j = 0; j < N; j++)
+            {
+                temp += B[i][j] * d[j];
+            }
+
+            x[i] = temp + d[i];
+        }
+
+        norm = fabs(d[0] - x[0]);
+        for (int i = 1; i < N; i++)
+        {
+            if (fabs(d[i] - x[i]) > norm)
+            {
+                norm = fabs(d[i] - x[i]);
+            }
+
+            d[i] = x[i];
+        }
+    } while (norm > eps);
 }
 
 
