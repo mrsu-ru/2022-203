@@ -61,6 +61,29 @@ void akimovada::lab2()
 
 }
 
+void printM(double**matrix, int N)
+{
+    for (int i = 0; i < N; i++)
+    {
+        cout<<endl;
+        for (int j = 0; j < N; j++)
+        {
+            cout<<matrix[i][j]<<" ";
+        }
+    }
+
+    cout<<endl;
+}
+void printA(double* array, int N)
+{
+    cout<<endl;
+    for (int i = 0; i < N; i++)
+    {
+        cout<<array[i]<<" ";
+    }
+    cout<<endl;
+}
+
 
 
 /**
@@ -99,6 +122,80 @@ void akimovada::lab3()
  */
 void akimovada::lab4()
 {
+    double**L = new double *[N];
+    for (int i = 0; i < N; i++)
+    {
+        L[i] = new double[N];
+        for (int j = 0; j < N; j++)
+        {
+            L[i][j] = 0;
+        }
+    }
+
+    L[0][0] = sqrt(A[0][0]);
+    for (int i = 1; i < N; i++)
+    {
+        L[i][0] = A[i][0] / L[0][0];
+    }
+
+    for (int i = 1; i < N; i++)
+    {
+        double temp = 0;
+        for (int p = 0; p < i; p++)
+        {
+            temp += L[i][p] * L[i][p];
+        }
+
+        L[i][i] = sqrt(A[i][i] - temp);
+        temp = 0;
+        for (int j = i; j < N; j++)
+        {
+            for (int p = 0; p < i - 1; p++)
+            {
+                temp += L[i][p] * L[j][p];
+            }
+            L[j][i] = (A[j][i] - temp) / L[i][i];
+        }
+    }
+
+    double **L_T = new double*[N];
+
+    for (int i = 0; i < N; i++)
+    {
+        L_T[i] = new double[N];
+        for (int j = 0; j < N; j++)
+        {
+            L_T[i][j] = L[j][i];
+        }
+    }
+
+    for (int i = 0; i < N; i++)
+    {
+        b[i] /= L[i][i];
+        L[i][i] = 1;
+        for (int j = i; j < N; j++)
+        {
+            b[j] -= b[i] * L[j][i];
+            L[j][i] = 0;
+        }
+    }
+
+    for (int i = N - 1; i >= 0; i--)
+    {
+        b[i] /= L_T[i][i];
+        L_T[i][i] = 1;
+        for (int j = 0; j < i; j++)
+        {
+            b[j] -= b[i] * L_T[j][i];
+            L_T[j][i] = 0;
+        }
+    }
+
+    for (int i = 0; i < N; i++)
+    {
+        x[i] = b[i];
+    }
+
 
 }
 
