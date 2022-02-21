@@ -122,34 +122,282 @@ void nuyanzinma::lab3()
 	}
 }
 
+void forwardGaussMethod(int N, double**& L, double*& y, double*& b)
+{
+	for (int i = 0; i < N; i++)
+	{
+		double firstNumber = L[i][i];
+		for (int k = i; k < N; k++)
+		{
+			L[i][k] /= firstNumber;
+		}
+		b[i] /= firstNumber;
 
+		for (int j = i + 1; j < N; j++)
+		{
+			double multiplier = L[j][i];
+			for (int k = i; k < N; k++)
+			{
+				L[j][k] -= L[i][k] * multiplier;
+			}
+			b[j] -= b[i] * multiplier;
+		}
+	}
+	for (int i = 0; i < N; i++)
+	{
+		y[i] = b[i];
+	}
+}
+
+void reverseGaussMethod(int N, double**& Ltr, double*& x, double*& y)
+{
+	for (int i = N - 1; i >= 0; i--)
+	{
+		double ltrDiag = Ltr[i][i];
+		for (int k = i; k < N; k++)
+		{
+			Ltr[i][k] /= ltrDiag;
+		}
+		y[i] /= ltrDiag;
+
+		for (int j = i - 1; j >= 0; j--)
+		{
+			double multiplier = Ltr[j][i];
+			for (int k = i; k >= 0; k--)
+			{
+				Ltr[j][k] -= Ltr[i][k] * multiplier;
+			}
+			y[j] -= y[i] * multiplier;
+		}
+	}
+	for (int i = 0; i < N; i++)
+	{
+		x[i] = y[i];
+	}
+}
 
 /**
  * Метод Холецкого
  */
 void nuyanzinma::lab4()
 {
+	double** L = new double* [N];
+	for (int i = 0; i < N; i++)
+	{
+		L[i] = new double[N];
+	}
+	for (int i = 0; i < N; i++)
+	{
+		for (int j = 0; j < N; j++)
+		{
+			L[i][j] = 0;
+		}
+	}
 
+	L[0][0] = sqrt(A[0][0]);
+
+	for (int i = 1; i < N; i++)
+	{
+		L[i][0] = A[i][0] / L[0][0];
+	}
+
+	for (int i = 1; i < N; i++)
+	{
+		double sum = 0;
+		for (int p = 0; p < i; p++)
+		{
+			sum += L[i][p] * L[i][p];
+		}
+		L[i][i] = sqrt(A[i][i] - sum);
+
+		for (int j = i + 1; j < N; j++)
+		{
+			double sum = 0;
+			for (int p = 0; p < i; p++)
+			{
+				sum += L[i][p] * L[j][p];
+			}
+			L[j][i] = 1 / L[i][i] * (A[j][i] - sum);
+		}
+	}
+
+	double** Ltr = new double* [N];
+	for (int i = 0; i < N; i++)
+	{
+		Ltr[i] = new double[N];
+	}
+	for (int i = 0; i < N; i++)
+	{
+		for (int j = 0; j < N; j++)
+		{
+			Ltr[i][j] = L[j][i];
+		}
+	}
+	double* y = new double[N];
+	forwardGaussMethod(N, L, y, b);
+	reverseGaussMethod(N, Ltr, x, y);
 }
 
+double** productOfMatricies(int N, double**& A, double**& B)
+{
+	double** result = new double*[N];
+	for (int i = 0; i < N; i++)
+	{
+		result[i] = new double[N];
+	}
 
+	for (int i = 0; i < N; i++)
+	{
+		for (int j = 0; j < N; j++)
+		{
+			double sum = 0.0;
+			for (int k = 0; k < N; k++)
+			{
+				sum += A[i][k] * B[k][j];
+			}
+			result[i][j] = sum;
+		}
+	}
+
+	return result;
+}
+
+double* productOfMatrixAndVector(int N, double**& A, double*& d)
+{
+	double* result = new double[N];
+	for (int i = 0; i < N; i++)
+	{
+		double sum = 0;
+		for (int j = 0; j < N; j++)
+		{
+			sum += A[i][j] * d[j];
+		}
+		result[i] = sum;
+	}
+	return result;
+}
 
 /**
  * Метод Якоби или Зейделя
  */
 void nuyanzinma::lab5()
 {
+	double** D = new double* [N];
+	double** Drev = new double* [N];
+	double** DminusA = new double* [N];
+	for (int i = 0; i < N; i++)
+	{
+		D[i] = new double[N];
+		Drev[i] = new double[N];
+		DminusA[i] = new double[N];
+	}
 
+	for (int i = 0; i < N; i++)
+	{
+		for (int j = 0; j < N; j++)
+		{
+			D[i][j] = i == j ? A[i][i] : 0.0;
+			Drev[i][j] = i == j ? 1 / A[i][i] : 0.0;
+			DminusA[i][j] = D[i][j] - A[i][j];
+		}
+	}
+
+
+	double** B = productOfMatricies(N, Drev, DminusA);
+
+	double* g = productOfMatrixAndVector(N, Drev, b);
+
+	double* xk = new double[N];
+	for (int i = 0; i < N; i++)
+	{
+		xk[i] = b[i];
+	}
+	double* xk1 = new double[N];
+	const double eps = 1e-18;
+	double q = 0.0;
+	do
+	{
+		double* Bxk = productOfMatrixAndVector(N, B, xk);
+
+		for (int i = 0; i < N; i++)
+		{
+			xk1[i] = Bxk[i] + g[i];
+		}
+
+		xk = xk1;
+
+		double* Axk = productOfMatrixAndVector(N, A, xk);
+		q = 0.0;
+		for (int i = 0; i < N; i++)
+		{
+			q += (Axk[i] - b[i]) * (Axk[i] - b[i]);
+		}
+
+	} while (sqrt(q) > eps);
+
+	for (int i = 0; i < N; i++)
+	{
+		x[i] = xk[i];
+	}
 }
-
-
 
 /**
  * Метод минимальных невязок
  */
 void nuyanzinma::lab6()
 {
+	double* xk = b;
+	double* rk = new double[N];
+	double tau = 0;
+	double eps = 1e-18;
+	double maxDiff;
+	do
+	{
+		double* product = productOfMatrixAndVector(N, A, xk);
+		for (int i = 0; i < N; i++)
+		{
+			rk[i] = product[i] - b[i];
+		}
 
+		//Скалярное произведение
+		double* Ark = productOfMatrixAndVector(N, A, rk);
+		double scalarProd1 = 0;
+		for (int i = 0; i < N; i++)
+		{
+			scalarProd1 += Ark[i] * rk[i];
+		}
+
+		double scalarProd2 = 0;
+		for (int i = 0; i < N; i++)
+		{
+			scalarProd2 += Ark[i] * Ark[i];
+		}
+
+		tau = scalarProd1 / scalarProd2;
+
+		// Поиск Xk+1
+		double* xk1 = new double[N];
+		for (int i = 0; i < N; i++)
+		{
+			xk1[i] = xk[i] - tau * rk[i];
+		}
+		maxDiff = abs(xk1[0] - xk[0]);
+
+		for (int i = 1; i < N; i++)
+		{
+			double currDiff = abs(xk1[i] - xk[i]);
+			if (currDiff > maxDiff)
+			{
+				maxDiff = currDiff;
+			}
+		}
+		xk = xk1;
+	} while (maxDiff > eps);
+
+	for (int i = 0; i < N; i++)
+	{
+		x[i] = xk[i];
+	}
 }
 
 
