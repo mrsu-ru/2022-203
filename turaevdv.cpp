@@ -218,41 +218,249 @@ void turaevdv::lab5() {
 }
 
 
-
+double* mulMatrixOnVector(double** matrix, double* vector, int size);
 /**
  * Метод минимальных невязок
  */
-void turaevdv::lab6()
-{
+void turaevdv::lab6() {
+    double * nextVectorX = new double[N];
 
+    for (int i = 0; i < N; ++i) {
+        nextVectorX[i] = b[i];
+    }
+
+    double eps = 1.e-19;
+    double *r = new double[N];
+    double norm;
+
+    do {
+        double * mulMatrixAOnX = mulMatrixOnVector(A, x, N);
+
+        for (int i = 0; i < N; ++i) {
+            r[i] = mulMatrixAOnX[i] - b[i];
+        }
+
+        double * mulMatrixOnR = mulMatrixOnVector(A, r, N);
+
+        double t = 0;
+        double sum = 0;
+        for (int i = 0; i < N; ++i) {
+            t += mulMatrixOnR[i] * r[i];
+            sum += pow(mulMatrixOnR[i], 2);
+        }
+
+        t /= sum;
+
+        norm = 0;
+        for (int i = 0; i < N; ++i) {
+            x[i] = nextVectorX[i] - t * r[i];
+            if (norm < fabs(nextVectorX[i] - x[i])) {
+                norm = fabs(nextVectorX[i] - x[i]);
+            }
+            nextVectorX[i] = x[i];
+        }
+    } while (norm >= eps);
 }
 
+double* mulMatrixOnVector(double** matrix, double* vector, int size) {
+    double* result = new double [size];
+    for (int i = 0; i < size; ++i) {
+        result[i] = 0;
+        for (int j = 0; j < size; ++j) {
+            result[i] += matrix[i][j] * vector[j];
+        }
+    }
+    return result;
+}
+
+double scalarProduct(double* v1, double* v2, int size) {
+    double sum = 0;
+    for (int i = 0; i < size; ++i) {
+        sum += v1[i] * v2[i];
+    }
+    return sum;
+}
 
 
 /**
  * Метод сопряженных градиентов
  */
-void turaevdv::lab7()
-{
+void turaevdv::lab7() {
+    double * nextVectorX = new double[N];
 
+    for (int i = 0; i < N; ++i) {
+        x[i] = b[i];
+    }
+
+    double eps = 1.e-25;
+    double * r = new double[N];
+    double * z = new double[N];
+    double norm;
+
+    double * mulMatrixAOnX = mulMatrixOnVector(A, x, N);
+
+    for (int i = 0; i < N; ++i) {
+        r[i] = b[i] - mulMatrixAOnX[i];
+        z[i] = r[i];
+    }
+
+    do {
+        double * mulMatrixAOnZ = mulMatrixOnVector(A, z, N);
+
+        double alpha = scalarProduct(r, r, N) / scalarProduct(mulMatrixAOnZ, z, N);
+
+        double * nextVectorR = new double[N];
+
+        for (int i = 0; i < N; ++i) {
+            nextVectorX[i] = x[i] + alpha * z[i];
+            nextVectorR[i] = r[i] - alpha * mulMatrixAOnZ[i];
+        }
+
+        double beta = scalarProduct(nextVectorR, nextVectorR, N) / scalarProduct(r, r, N);
+
+        norm = 0;
+        for (int i = 0; i < N; ++i) {
+            z[i] = nextVectorR[i] + beta * z[i];
+            r[i] = nextVectorR[i];
+            if (norm < fabs(nextVectorX[i] - x[i])) {
+                norm = fabs(nextVectorX[i] - x[i]);
+            }
+            x[i] = nextVectorX[i];
+        }
+    } while (norm >= eps);
 }
 
-
+double ** mulMatrixOnMatrix(double ** leftMatrix, double ** rightMatrix, int size);
+double ** transpose(double ** matrix, int size);
 /**
  * Метод вращения для нахождения собственных значений матрицы
  */
-void turaevdv::lab8()
-{
+void turaevdv::lab8() {
+    double eps = 0.003;
+    double maxElement = 0;
 
+    do {
+        int positionI = 0;
+        int positionJ = 0;
+
+        maxElement = 0;
+        for (int i = 0; i < N - 1; ++i) {
+            for (int j = i + 1; j < N; ++j) {
+                if (maxElement < fabs(A[i][j])) {
+                    maxElement = fabs(A[i][j]);
+                    positionI = i;
+                    positionJ = j;
+                }
+            }
+        }
+
+        double sin = sqrt(2)/2;
+        double cos = sqrt(2)/2;
+
+        double P = 0;
+        if (A[positionI][positionI] != A[positionJ][positionJ]) {
+            P = 2*A[positionI][positionJ]/(A[positionI][positionI] - A[positionJ][positionJ]);
+            if (P == 0) {
+                sin = 0;
+            } else {
+                sin = sqrt(0.5 * (1 - 1/(sqrt(1 + P*P))));
+                if (P < 0) {
+                    sin *= -1;
+                }
+            }
+            cos = sqrt(0.5 * (1 + 1/(sqrt(1 + P*P))));
+        }
+
+        double ** matrixH = new double* [N];
+        for (int i = 0; i < N; ++i) {
+            matrixH[i] = new double [N];
+        }
+
+        for (int i = 0; i < N; ++i) {
+            for (int j = 0; j < N; ++j) {
+                if (i == j) {
+                    matrixH[i][j] = 1;
+                } else {
+                    matrixH[i][j] = 0;
+                }
+            }
+        }
+
+        matrixH[positionI][positionI] = cos;
+        matrixH[positionJ][positionJ] = cos;
+        matrixH[positionI][positionJ] = -sin;
+        matrixH[positionJ][positionI] = sin;
+
+        A = mulMatrixOnMatrix(mulMatrixOnMatrix(transpose(matrixH, N), A, N), matrixH, N);
+
+    } while (maxElement >= eps);
+    for (int i = 0; i < N; ++i) {
+        cout << "Lambda " << i+1 << " = " << A[i][i] << endl;
+    }
 }
 
+double ** mulMatrixOnMatrix(double ** leftMatrix, double ** rightMatrix, int size) {
+    double ** result = new double *[size];
+    for (int i = 0; i < size; ++i) {
+        result[i] = new double [size];
+    }
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            result[i][j] = 0;
+            for (int k = 0; k < size; ++k) {
+                result[i][j] += leftMatrix[i][k] * rightMatrix[k][j];
+            }
+        }
+    }
+
+    return result;
+}
+
+double ** transpose(double ** matrix, int size) {
+    double ** result = new double *[size];
+    for (int i = 0; i < size; ++i) {
+        result[i] = new double [size];
+    }
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            result[i][j] = matrix[j][i];
+        }
+    }
+
+    return result;
+}
 
 /**
  * Нахождение наибольшего по модулю собственного значения матрицы
  */
-void turaevdv::lab9()
-{
+void turaevdv::lab9() {
+    double eps = 1.e-10;
+    double * r = new double [N];
+    double * nextR = new double [N];
+    for (int i = 0; i < N; ++i) {
+        r[i] = b[i];
+    }
 
+    double mu = 0;
+    double norm = 0;
+
+    do {
+        double* mulMatrixAOnR = mulMatrixOnVector(A, r, N);
+        double normMatrixAOnR = sqrt(scalarProduct(mulMatrixAOnR, mulMatrixAOnR, N));
+
+        for (int i = 0; i < N; ++i) {
+            nextR[i] = mulMatrixAOnR[i]/normMatrixAOnR;
+        }
+
+        double nextMu = scalarProduct(r, mulMatrixAOnR, N) / scalarProduct(r, r, N);
+        norm = fabs(nextMu - mu);
+        mu = nextMu;
+
+        for (int i = 0; i < N; ++i) {
+            r[i] = nextR[i];
+        }
+    } while (norm >= eps);
+    cout << "Maximal lambda = " << mu << endl;
 }
 
 
