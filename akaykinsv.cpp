@@ -66,9 +66,25 @@ void akaykinsv::lab2()
  */
 void akaykinsv::lab3()
 {
+    double alpha[N - 1], beta[N], y[N];
+    //Прямая прогонка
+    y[0] = A[0][0];
+    beta[0] = b[0] / y[0];
+    alpha[0] = -A[0][1] / y[0];
+    for (int i = 1; i < N; i++) {
+        y[i] = A[i][i] + A[i][i-1]*alpha[i-1];
+        beta[i] = (b[i] - A[i][i-1]*beta[i-1])/y[i];
+        if (i != N - 1) {
+            alpha[i] = -A[i][i+1]/y[i];
+        }
+    }
 
+    //Обратная прогонка
+    x[N-1] = beta[N-1];
+    for (int i = N-2; i >= 0; i--) {
+        x[i] = alpha[i] * x[i+1] + beta[i];
+    }
 }
-
 
 
 /**
