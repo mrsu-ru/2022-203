@@ -61,6 +61,50 @@ void akimovada::lab2()
 
 }
 
+void Gauss(double **A, double *b, int N)
+{
+    for (int i = 0; i < N; i++)
+    {
+        int k = i;
+        for (int q = i + 1; q < N; q++)
+        {
+            if (abs(A[k][i]) < abs(A[q][i]) || A[k][i] == 0)
+            {
+                k = q;
+            }
+        }
+
+        if (k != i){
+            for (int j = 0; j < N; j++)
+            {
+                swap(A[i][j], A[k][j]);
+                swap(b[i], b[k]);
+            }
+        }
+
+        double main_element = A[i][i];
+        for (int j = 0; j < N; j++)
+        {
+            A[i][j] /= main_element;
+        }
+
+        b[i] /= main_element;
+        for (int j = 0; j < N; j++)
+        {
+            if (j != i)
+            {
+                double main_div = -A[j][i];
+                for (int z = 0; z < N; z++)
+                {
+                    A[j][z] += main_div * A[i][z];
+                }
+
+                b[j] += main_div * b[i];
+            }
+        }
+    }
+}
+
 void printM(double**matrix, int N)
 {
     for (int i = 0; i < N; i++)
@@ -148,9 +192,9 @@ void akimovada::lab4()
 
         L[i][i] = sqrt(A[i][i] - temp);
         temp = 0;
-        for (int j = i; j < N; j++)
+        for (int j = i + 1; j < N; j++)
         {
-            for (int p = 0; p < i - 1; p++)
+            for (int p = 1; p < i - 1; p++)
             {
                 temp += L[i][p] * L[j][p];
             }
@@ -169,27 +213,8 @@ void akimovada::lab4()
         }
     }
 
-    for (int i = 0; i < N; i++)
-    {
-        b[i] /= L[i][i];
-        L[i][i] = 1;
-        for (int j = i; j < N; j++)
-        {
-            b[j] -= b[i] * L[j][i];
-            L[j][i] = 0;
-        }
-    }
-
-    for (int i = N - 1; i >= 0; i--)
-    {
-        b[i] /= L_T[i][i];
-        L_T[i][i] = 1;
-        for (int j = 0; j < i; j++)
-        {
-            b[j] -= b[i] * L_T[j][i];
-            L_T[j][i] = 0;
-        }
-    }
+    Gauss(L, b, N);
+    Gauss(L_T, b, N);
 
     for (int i = 0; i < N; i++)
     {
