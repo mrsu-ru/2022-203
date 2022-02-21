@@ -433,9 +433,34 @@ double ** transpose(double ** matrix, int size) {
 /**
  * Нахождение наибольшего по модулю собственного значения матрицы
  */
-void turaevdv::lab9()
-{
+void turaevdv::lab9() {
+    double eps = 1.e-10;
+    double * r = new double [N];
+    double * nextR = new double [N];
+    for (int i = 0; i < N; ++i) {
+        r[i] = b[i];
+    }
 
+    double mu = 0;
+    double norm = 0;
+
+    do {
+        double* mulMatrixAOnR = mulMatrixOnVector(A, r, N);
+        double normMatrixAOnR = sqrt(scalarProduct(mulMatrixAOnR, mulMatrixAOnR, N));
+
+        for (int i = 0; i < N; ++i) {
+            nextR[i] = mulMatrixAOnR[i]/normMatrixAOnR;
+        }
+
+        double nextMu = scalarProduct(r, mulMatrixAOnR, N) / scalarProduct(r, r, N);
+        norm = fabs(nextMu - mu);
+        mu = nextMu;
+
+        for (int i = 0; i < N; ++i) {
+            r[i] = nextR[i];
+        }
+    } while (norm >= eps);
+    cout << "Maximal lambda = " << mu << endl;
 }
 
 
