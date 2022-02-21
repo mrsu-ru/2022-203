@@ -192,9 +192,29 @@ void reverse(double **mas, int size) {
 /**
  * Метод Якоби или Зейделя
  */
-void turaevdv::lab5()
-{
+void turaevdv::lab5() {
+    double norm = 0;
+    double e = 1.e-20;
+    for (int i = 0; i < N; ++i) {
+        x[i] = b[i];
+    }
 
+    do {
+        norm = 0;
+        for(int i = 0; i < N; ++i) {
+            double sum = 0;
+            for (int j = 0; j < N; ++j) {
+                if (i != j) {
+                    sum += A[i][j] * x[j];
+                }
+            }
+            sum = (b[i] - sum)/A[i][i];
+            if (norm < (fabs(sum - x[i]))) {
+                norm = (fabs(sum - x[i]));
+            }
+            x[i] = sum;
+        }
+    } while (norm >= e);
 }
 
 
