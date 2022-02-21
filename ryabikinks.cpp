@@ -45,18 +45,18 @@ void ryabikinks::lab2()
 }
 
 
+void fuller(double mass[], int N) {
+	for (int i = 0; i < N; i++)
+	{
+		mass[i] = 0.0;
+	}
+}
 
 /**
  * Метод прогонки
  */
 void ryabikinks::lab3()
 {
-    void fuller(double mass[], int N) {
-        for (int i = 0; i < N; i++)
-        {
-            mass[i] = 0.0;
-        }
-    }
     double y = 0.0;
     double beta[N];
     double alpha[N];
