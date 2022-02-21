@@ -273,14 +273,61 @@ double* mulMatrixOnVector(double** matrix, double* vector, int size) {
     return result;
 }
 
+double scalarProduct(double* v1, double* v2, int size) {
+    double sum = 0;
+    for (int i = 0; i < size; ++i) {
+        sum += v1[i] * v2[i];
+    }
+    return sum;
+}
 
 
 /**
  * Метод сопряженных градиентов
  */
-void turaevdv::lab7()
-{
+void turaevdv::lab7() {
+    double * nextVectorX = new double[N];
 
+    for (int i = 0; i < N; ++i) {
+        x[i] = b[i];
+    }
+
+    double eps = 1.e-25;
+    double * r = new double[N];
+    double * z = new double[N];
+    double norm;
+
+    double * mulMatrixAOnX = mulMatrixOnVector(A, x, N);
+
+    for (int i = 0; i < N; ++i) {
+        r[i] = b[i] - mulMatrixAOnX[i];
+        z[i] = r[i];
+    }
+
+    do {
+        double * mulMatrixAOnZ = mulMatrixOnVector(A, z, N);
+
+        double alpha = scalarProduct(r, r, N) / scalarProduct(mulMatrixAOnZ, z, N);
+
+        double * nextVectorR = new double[N];
+
+        for (int i = 0; i < N; ++i) {
+            nextVectorX[i] = x[i] + alpha * z[i];
+            nextVectorR[i] = r[i] - alpha * mulMatrixAOnZ[i];
+        }
+
+        double beta = scalarProduct(nextVectorR, nextVectorR, N) / scalarProduct(r, r, N);
+
+        norm = 0;
+        for (int i = 0; i < N; ++i) {
+            z[i] = nextVectorR[i] + beta * z[i];
+            r[i] = nextVectorR[i];
+            if (norm < fabs(nextVectorX[i] - x[i])) {
+                norm = fabs(nextVectorX[i] - x[i]);
+            }
+            x[i] = nextVectorX[i];
+        }
+    } while (norm >= eps);
 }
 
 
