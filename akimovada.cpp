@@ -14,21 +14,23 @@ void akimovada::lab1()
  */
 void akimovada::lab2()
 {
-    //int position = 0;
 	for (int i = 0; i < N; i++)
 	{
 		int k = i;
-		while (A[k][i] == 0)
+		for (int q = i + 1; q < N; q++)
 		{
-			if (k == N - 1)
-				break;
-			else
-				k++;
+			if (abs(A[k][i]) < abs(A[q][i]) || A[k][i] == 0)
+			{
+				k = q;
+			}
 		}
 
-		for (int j = 0; j < N; j++)
-		{
-			swap(A[i][j], A[k][j]);
+		if (k != i){
+			for (int j = 0; j < N; j++)
+			{
+				swap(A[i][j], A[k][j]);
+                swap(b[i], b[k]);
+			}
 		}
 
 		double main_element = A[i][i];
@@ -59,6 +61,29 @@ void akimovada::lab2()
 
 }
 
+void printM(double**matrix, int N)
+{
+    for (int i = 0; i < N; i++)
+    {
+        cout<<endl;
+        for (int j = 0; j < N; j++)
+        {
+            cout<<matrix[i][j]<<" ";
+        }
+    }
+
+    cout<<endl;
+}
+void printA(double* array, int N)
+{
+    cout<<endl;
+    for (int i = 0; i < N; i++)
+    {
+        cout<<array[i]<<" ";
+    }
+    cout<<endl;
+}
+
 
 
 /**
@@ -66,6 +91,27 @@ void akimovada::lab2()
  */
 void akimovada::lab3()
 {
+	double alpha[N - 1];
+	double beta[N];
+
+	double y = A[0][0];
+	alpha[0] = -A[0][1] / y;
+	beta[0] = b[0] / y;
+
+	for (int i = 1; i < N - 1; i++)
+	{
+		y = A[i][i] + A[i][i - 1] * alpha[i - 1];
+		alpha[i] = -A[i][i + 1] / y;
+		beta[i] = (b[i] - A[i][i - 1] * beta[i - 1]) / y;
+	}
+
+	beta[N - 1] = (b[N - 1] - A[N - 1][N - 2] * beta[N - 2]) / (A[N - 1][N - 1] + A[N - 1][N - 2] * alpha[N - 2]);
+	x[N - 1] = beta[N - 1];
+
+	for (int i = N - 2; i >= 0; i--)
+	{
+		x[i] = alpha[i] * x[i + 1] + beta[i];
+	}
 
 }
 
@@ -76,6 +122,80 @@ void akimovada::lab3()
  */
 void akimovada::lab4()
 {
+    double**L = new double *[N];
+    for (int i = 0; i < N; i++)
+    {
+        L[i] = new double[N];
+        for (int j = 0; j < N; j++)
+        {
+            L[i][j] = 0;
+        }
+    }
+
+    L[0][0] = sqrt(A[0][0]);
+    for (int i = 1; i < N; i++)
+    {
+        L[i][0] = A[i][0] / L[0][0];
+    }
+
+    for (int i = 1; i < N; i++)
+    {
+        double temp = 0;
+        for (int p = 0; p < i; p++)
+        {
+            temp += L[i][p] * L[i][p];
+        }
+
+        L[i][i] = sqrt(A[i][i] - temp);
+        temp = 0;
+        for (int j = i; j < N; j++)
+        {
+            for (int p = 0; p < i - 1; p++)
+            {
+                temp += L[i][p] * L[j][p];
+            }
+            L[j][i] = (A[j][i] - temp) / L[i][i];
+        }
+    }
+
+    double **L_T = new double*[N];
+
+    for (int i = 0; i < N; i++)
+    {
+        L_T[i] = new double[N];
+        for (int j = 0; j < N; j++)
+        {
+            L_T[i][j] = L[j][i];
+        }
+    }
+
+    for (int i = 0; i < N; i++)
+    {
+        b[i] /= L[i][i];
+        L[i][i] = 1;
+        for (int j = i; j < N; j++)
+        {
+            b[j] -= b[i] * L[j][i];
+            L[j][i] = 0;
+        }
+    }
+
+    for (int i = N - 1; i >= 0; i--)
+    {
+        b[i] /= L_T[i][i];
+        L_T[i][i] = 1;
+        for (int j = 0; j < i; j++)
+        {
+            b[j] -= b[i] * L_T[j][i];
+            L_T[j][i] = 0;
+        }
+    }
+
+    for (int i = 0; i < N; i++)
+    {
+        x[i] = b[i];
+    }
+
 
 }
 
@@ -86,7 +206,55 @@ void akimovada::lab4()
  */
 void akimovada::lab5()
 {
+    double eps = 1.e-19;
+    double **B = new double*[N];
+    for (int i = 0; i < N; i++)
+    {
+        B[i] = new double[N];
+        for (int j = 0; j < N; j++)
+        {
+            if (i == j)
+            {
+                B[i][i] = 0;
+            }
+            else
+            {
+                B[i][j] = -A[i][j] / A[i][i];
+            }
+        }
+    }
 
+    double *d = new double[N];
+    for (int i = 0; i < N; i++)
+    {
+        d[i] = b[i] / A[i][i];
+    }
+
+    double *x = new double[N];
+    double norm;
+    do {
+        for (int i = 0; i < N; i++)
+        {
+            double temp = 0;
+            for (int j = 0; j < N; j++)
+            {
+                temp += B[i][j] * d[j];
+            }
+
+            x[i] = temp + d[i];
+        }
+
+        norm = fabs(d[0] - x[0]);
+        for (int i = 1; i < N; i++)
+        {
+            if (fabs(d[i] - x[i]) > norm)
+            {
+                norm = fabs(d[i] - x[i]);
+            }
+
+            d[i] = x[i];
+        }
+    } while (norm > eps);
 }
 
 
@@ -96,7 +264,20 @@ void akimovada::lab5()
  */
 void akimovada::lab6()
 {
+    double eps = 1.e-18, *x_0 = new double[N], *r_0 = new double[N], *temp = new double[N], modul = 0;
+    for (int i = 0; i < N; i++)
+    {
+        x_0[i] = b[i];
+        temp[i] = 0;
+        for (int j = 0; j < N; j++)
+        {
+            temp[i] += x_0[j]*A[i][j];
+        }
 
+        r_0[i] = b[i] - temp[i];
+        modul += r_0[i] * r_0[i];
+    }
+    
 }
 
 
