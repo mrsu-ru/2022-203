@@ -45,12 +45,54 @@ void ryabikinks::lab2()
 }
 
 
+void fuller(double mass[], int N) {
+	for (int i = 0; i < N; i++)
+	{
+		mass[i] = 0.0;
+	}
+}
 
 /**
  * Метод прогонки
  */
 void ryabikinks::lab3()
 {
+    double y = 0.0;
+    double beta[N];
+    double alpha[N];
+    fuller(beta, N);
+    fuller(alpha, N);
+
+    for (int j = 0; j < N; j++)
+    {
+        if (j == 0) {
+            y = A[j][j];
+            alpha[j] = -A[j][j + 1] / y;
+            beta[j] = b[j] / y;
+            continue;
+        }
+
+        for (int i = 1; i < N - 1; i++)
+        {
+            y = A[i][i] + A[i][i - 1] * alpha[i - 1];
+            alpha[i] = -A[i][i + 1] / y;
+            beta[i] = (b[i] - A[i][i - 1] * beta[i - 1]) / y;
+        }
+
+        if (j == N - 1) {
+            y = A[j][j] + A[j][j - 1] * alpha[j - 1];
+            beta[j] = (b[j] - A[j][j - 1] * beta[j - 1]) / y;
+            continue;
+        }
+    }
+    for (int i = N - 1; i >= 0; i--)
+    {
+        if (i == N - 1) {
+            x[i] = beta[i];
+            continue;
+        }
+        x[i] = alpha[i] * x[i + 1] + beta[i];
+    }
 
 }
 
