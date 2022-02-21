@@ -14,7 +14,6 @@ void nikishkinev::lab1()
  */
 void nikishkinev::lab2()
 {
-    int* swaps = new int[N];
     for (int i = 0; i < N; i++) {
         int m = i;
         for (int j = i + 1; j < N; j++) {
@@ -24,7 +23,6 @@ void nikishkinev::lab2()
         }
         swap(A[i], A[m]);
         swap(b[i], b[m]);
-        swaps[i] = m;
 
         for (int j = i + 1; j < N; j++) {
             A[i][j] /= A[i][i];
@@ -48,13 +46,9 @@ void nikishkinev::lab2()
         }
     }
 
-    for (int i = N - 1; i >= 0; i--) {
-        swap(b[swaps[i]], b[i]);
-    }
     for (int i = 0; i < N; i++) {
         x[i] = b[i];
     }
-    delete[] swaps;
 }
 
 
@@ -141,19 +135,22 @@ void nikishkinev::lab5()
 {
     double EPS = 1e-15;
     double* newX = new double[N];
-    double length = 0;
+    bool f;
     do {
-        length = 0;
+        f = false;
         for (int i = 0; i < N; i++) {
             newX[i] = b[i];
             for (int j = 0; j < i; j++) {
                 newX[i] -= A[i][j] * x[j];
             }
+            for (int j = i + 1; j < N; j++) {
+                newX[i] -= A[i][j] * x[j];
+            }
             newX[i] /= A[i][i];
-            length += (newX[i] - x[i]) * (newX[i] - x[i]);
-            x[i] = newX[i];
+            if (abs((newX[i] - x[i])) > EPS) f = true;
         }
-    } while (length > EPS);
+        for (int i = 0; i < N; i++) x[i] = newX[i];
+    } while (f);
     delete[] newX;
 }
 
