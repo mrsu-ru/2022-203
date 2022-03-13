@@ -130,7 +130,7 @@ void akaykinsv::lab4()
         }
 
     }
-    
+
 }
 
 
@@ -140,7 +140,30 @@ void akaykinsv::lab4()
  */
 void akaykinsv::lab5()
 {
+    double *xk = new double[N];
+    double eps = 1e-20;
+    double norm;
+    //Начальное приближение
+    for (int i = 0; i < N; i++) x[i] = b[i]/A[i][i];
 
+    do {
+        for (int i = 0; i < N; i++) {
+
+            for (int j = 0; j < N; j++) xk[j] = x[j];
+
+            double lowerSum = 0, upperSum = 0;
+
+            for (int j = 0; j < i; j++) lowerSum += A[i][j] * xk[j];
+            for (int j = i + 1; j < N; j++) upperSum += A[i][j] * xk[j];
+
+            x[i] = 1/A[i][i] * (b[i] - lowerSum - upperSum);
+
+            if ( i == 0 ) norm = abs(x[i] - xk[i]);
+            if (abs(x[i] - xk[i]) > norm) norm = abs(x[i] - xk[i]);
+
+        }
+
+    } while (norm >= eps);
 }
 
 
