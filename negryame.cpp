@@ -14,6 +14,37 @@ void negryame::lab1()
  */
 void negryame::lab2()
 {
+	for (int i = 0; i < N; i++) {
+
+		int maxLine = i;
+
+		for (int j = i + 1; j < N; j++) {
+			if (abs(A[j][i]) > abs(A[maxLine][i])) {
+				maxLine = j;
+			}
+		}
+
+		if (maxLine != i) {
+			for (int j = 0; j < N; j++) {
+				swap(A[maxLine][j], A[i][j]);
+				swap(b[maxLine], b[i]);
+			}
+		}
+
+		for (int j = i + 1; j < N; j++) {
+			double k = A[j][i] / A[i][i];
+			for (int c = i; c < N; c++) {
+				A[j][c] -= k * A[i][c];
+			}
+			b[j] -= (k * b[i]);
+		}
+	}
+	for (int i = N - 1; i >= 0; i--) {
+		for (int j = i + 1; j < N; j++) {
+			b[i] -= A[i][j] * x[j];
+		}
+		x[i] = b[i] / A[i][i];
+	}
 
 }
 
@@ -24,8 +55,11 @@ void negryame::lab2()
  */
 void negryame::lab3()
 {
+	
 
 }
+
+
 
 
 
