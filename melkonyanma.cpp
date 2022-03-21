@@ -91,7 +91,7 @@ void melkonyanma::lab3()
             alpha[i] = -A[i][i + 1]/kappa;
         }
 
-        beta[i] = (b[i] - A[i][i]*beta[ i - 1])/kappa;
+        beta[i] = (b[i] - A[i][i - 1]*beta[ i - 1])/kappa;
     }
 
     x[N-1] = beta[N-1];
