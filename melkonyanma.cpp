@@ -96,7 +96,7 @@ void melkonyanma::lab3()
 
     x[N-1] = beta[N-1];
 
-    for(int i = N - 2; i > 0 ; --i)
+    for(int i = N - 2; i >= 0 ; --i)
     {
         x[i] = alpha[i]*x[i + 1] + beta[i];
     }
