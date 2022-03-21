@@ -51,7 +51,7 @@ void melkonyanma::lab2()
         }
     }   
 
-     for(int i = N - 1; i > 0 ; --i)
+    for(int i = N - 1; i > 0 ; --i)
     {
         double a = A[i][i];
         for(int k = i-1; k >= 0 ;--k)
@@ -74,7 +74,32 @@ void melkonyanma::lab2()
  */
 void melkonyanma::lab3()
 {
+    double * alpha = new double [N];
+    double * beta = new double [N];
+    double kappa;
 
+    kappa = A[0][0];
+    alpha[0] = -A[0][1]/kappa;
+    beta[0] = b[0]/kappa;
+
+    for(int i = 1; i < N ; ++i)
+    {
+        kappa = A[i][i] + A[i][i - 1]*alpha[i - 1];
+        
+        if( i != N - 1 )
+        {
+            alpha[i] = -A[i][i + 1]/kappa;
+        }
+
+        beta[i] = (b[i] - A[i][i]*beta[ i - 1])/kappa;
+    }
+
+    x[N] = beta[N];
+
+    for(int i = N - 1; i > 0 ; --i)
+    {
+        x[i] = alpha[i]*x[i + 1] + beta[i];
+    }
 }
 
 
