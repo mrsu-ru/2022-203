@@ -96,6 +96,52 @@ void ryabikinks::lab3()
 
 }
 
+void MatrixTransposition(double** A, double** B, int N) {
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            B[j][i] = A[i][j];
+        }
+    }
+}
+void Gauss(double** A, double* x, double* b, int N) {
+    int i = 0;
+    while (i < N) {
+        int maxColumn = i;
+        for (int j = i + 1; j < N; j++) {
+            if (abs(A[j][i]) > abs(A[maxColumn][i])) {
+                maxColumn = j;
+            }
+        }
+        if (maxColumn != i) {
+            swap(A[i], A[maxColumn]);
+            swap(b[i], b[maxColumn]);
+        }
+        for (int j = i + 1; j < N; j++) {
+            double ratio = A[j][i] / A[i][i];
+            for (int k = i; k < N; k++) {
+                A[j][k] -= (ratio * A[i][k]);
+            }
+            b[j] -= (ratio * b[i]);
+        }
+        i++;
+    }
+
+    for (int i = N - 1; i >= 0; i--) {
+        for (int j = i + 1; j < N; j++) {
+            b[i] -= (A[i][j] * x[j]);
+        }
+        x[i] = b[i] / A[i][i];
+    }
+}
+void fuller(double** mass, int N) {
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            mass[i][j] = 0.0;
+        }
+    }
+}
 
 
 /**
@@ -103,7 +149,49 @@ void ryabikinks::lab3()
  */
 void ryabikinks::lab4()
 {
+	double y[N];
+    fuller(y, N);
 
+    double** L = new double* [N];
+    for (int i = 0; i < N; i++) {
+        L[i] = new double[N];
+    }
+    fuller(L, N);
+
+    double** Lt = new double* [N];
+    for (int i = 0; i < N; i++) {
+        Lt[i] = new double[N];
+    }
+    fuller(Lt, N);
+
+    L[0][0] = sqrt(A[0][0]);
+    for (int i = 1; i < N; i++)
+    {
+        L[i][0] = A[i][0] / L[0][0];
+    }
+
+    for (int i = 1; i < N; i++)
+    {
+        double temp = 0;
+        for (int p = 0; p < i; p++)
+        {
+            temp += L[i][p] * L[i][p];
+        }
+
+        L[i][i] = sqrt(A[i][i] - temp);
+        temp = 0;
+        for (int j = i + 1; j < N; j++)
+        {
+            for (int p = 0; p < i; p++)
+            {
+                temp += L[i][p] * L[j][p];
+            }
+            L[j][i] = (A[j][i] - temp) / L[i][i];
+        }
+    }
+    MatrixTransposition(L, Lt, N);
+    Gauss(L, y, b, N);
+    Gauss(Lt, x, y, N);
 }
 
 
