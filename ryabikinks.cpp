@@ -211,15 +211,12 @@ void ryabikinks::lab5()
         Convergence = false;
         for (int i = 0; i < N; i++) {
             buffer[i] = b[i];
-            cout << buffer[i] << endl;
             for (int j = 0; j < N; j++) {
                 if (j != i) {
                     buffer[i] -= A[i][j] * x[j];
-                    cout << buffer[i] << endl;
                 }
             }
             buffer[i] /= A[i][i];
-            cout << buffer[i] << endl;
             if (fabs(buffer[i] - x[i]) > eps) {
                 Convergence = true;
             }
