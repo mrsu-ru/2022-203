@@ -171,8 +171,48 @@ void akaykinsv::lab5()
 /**
  * Метод минимальных невязок
  */
+ // Вспомогательный метод произведения матриц на вектор
+double *MVcomposition (double **A, double *x, int N) {
+    double *result = new double[N];
+    for (int i=0; i < N; i++) {
+        result[i] = 0;
+        for (int j = 0; j < N; j++) {
+            result[i] += A[i][j] * x[j];
+        }
+    }
+    return result;
+}
+//Вспомогательный метод вычисления скалярного произведения двух векторов
+double scalar(double *x, double *y, int N) {
+    double scal = 0;
+    for (int i = 0; i < N; i++) scal+= x[i] * y[i];
+    return scal;
+}
 void akaykinsv::lab6()
 {
+    double eps = 1e-19;
+    double *rk = new double[N];
+    double T = 0;
+    for (int i = 0; i < N; i++) x[i] = 0.1;
+
+    double norm;
+    do {
+        double *Axk = MVcomposition(A, x, N);
+
+        for (int i = 0; i < N; i++) rk[i] = Axk[i] - b[i];
+
+        double *Ark = MVcomposition(A, rk, N);
+
+        T = scalar(Ark, rk, N) / scalar(Ark, Ark, N);
+        norm = 0;
+        for (int i = 0; i < N; i++) {
+            double check = x[i];
+            x[i] = x[i] - T * rk[i];
+            norm += (x[i] - check) * (x[i] - check);
+        }
+
+    } while (sqrt(norm) > eps);
+
 
 }
 
