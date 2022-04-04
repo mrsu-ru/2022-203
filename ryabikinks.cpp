@@ -201,7 +201,31 @@ void ryabikinks::lab4()
  */
 void ryabikinks::lab5()
 {
-
+    double eps = 1e-10;
+    for (int i = 0; i < N; i++) {
+        x[i] = 1;
+    }
+    double* buffer = new double[N];
+    bool Convergence = true;
+    while (Convergence) {
+        Convergence = false;
+        for (int i = 0; i < N; i++) {
+            buffer[i] = b[i];
+            cout << buffer[i] << endl;
+            for (int j = 0; j < N; j++) {
+                if (j != i) {
+                    buffer[i] -= A[i][j] * x[j];
+                    cout << buffer[i] << endl;
+                }
+            }
+            buffer[i] /= A[i][i];
+            cout << buffer[i] << endl;
+            if (fabs(buffer[i] - x[i]) > eps) {
+                Convergence = true;
+            }
+            x[i] = buffer[i];
+        }
+    }
 }
 
 
