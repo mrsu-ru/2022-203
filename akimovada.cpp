@@ -284,7 +284,7 @@ void akimovada::lab5()
  */
 void akimovada::lab6()
 {
-    double eps = 1.e-18, *x_0 = new double[N], *r_0 = new double[N], *temp = new double[N], modul = 0;
+    /*double eps = 1.e-18, *x_0 = new double[N], *r_0 = new double[N], *temp = new double[N], modul = 0;
     for (int i = 0; i < N; i++)
     {
         x_0[i] = b[i];
@@ -296,7 +296,7 @@ void akimovada::lab6()
 
         r_0[i] = b[i] - temp[i];
         modul += r_0[i] * r_0[i];
-    }
+    }*/
     
 }
 
