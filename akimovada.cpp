@@ -236,26 +236,22 @@ void akimovada::lab5()
     for (int i = 0; i < N; i++)
     {
         B[i] = new double[N];
-        for (int j = 0; j < N; j++)
+        for (int j = 0; j < N + 1; j++)
         {
             if (i == j)
-            {
-                B[i][i] = 0;
-            }
+                B[i][j] = 0;
             else
-            {
                 B[i][j] = -A[i][j] / A[i][i];
-            }
         }
     }
-
-    double *d = new double[N];
+    double* d = new double[N];
+    double* dconst = new double[N];
     for (int i = 0; i < N; i++)
     {
         d[i] = b[i] / A[i][i];
+        dconst[i] = b[i] / A[i][i];
     }
 
-    double *x = new double[N];
     double norm;
     do {
         for (int i = 0; i < N; i++)
@@ -266,19 +262,19 @@ void akimovada::lab5()
                 temp += B[i][j] * d[j];
             }
 
-            x[i] = temp + d[i];
+            x[i] = temp + dconst[i];
         }
-
         norm = fabs(d[0] - x[0]);
         for (int i = 1; i < N; i++)
         {
-            if (fabs(d[i] - x[i]) > norm)
+            if (fabs(d[i] - x[i]) < norm)
             {
                 norm = fabs(d[i] - x[i]);
             }
 
             d[i] = x[i];
         }
+
     } while (norm > eps);
 }
 

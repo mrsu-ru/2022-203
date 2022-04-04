@@ -1,5 +1,6 @@
 ﻿#include "fedinda.h"
 #include <iostream>
+const double eps = 1.e-15;
 /**
  * Введение в дисциплину
  */
@@ -79,7 +80,31 @@ void fedinda::lab3()
  */
 void fedinda::lab4()
 {
+	const double lambda = 0.01;
+	double prev[N];
+	for (int i = 0; i < N; i++){
+		prev[i] = 0;
+	}
 
+	double difference;
+	do{
+		for (int i = 0; i < N; i++){
+			double sum = 0;
+			for (int j = 0; j < N; j++){
+				sum += A[i][j] * prev[j];
+			}
+			x[i] = prev[i] - lambda * (sum - b[i]);
+		}
+		difference = 0;
+		for (int i = 0; i < N; i++){
+			if (fabs(x[i] - prev[i]) > difference){
+				difference = fabs(x[i] - prev[i]);
+			}
+		}
+		for (int i = 0; i < N; i++){
+			prev[i] = x[i];
+		}
+	} while (difference > eps);
 }
 
 
@@ -89,7 +114,46 @@ void fedinda::lab4()
  */
 void fedinda::lab5()
 {
+	double prev[N];
+	for (int i = 0; i < N; i++)
+	{
+		prev[i] = 0;
+	}
 
+	double difference;
+	do
+	{
+		for (int i = 0; i < N; i++)
+		{
+			double sum = 0;
+			for (int j = 0; j < i; j++)
+			{
+				sum += A[i][j] * prev[j];
+			}
+
+			for (int j = i + 1; j < N; j++)
+			{
+				sum += A[i][j] * prev[j];
+			}
+
+			x[i] = (b[i] - sum) / A[i][i];
+		}
+
+		difference = 0;
+		for (int i = 0; i < N; i++)
+		{
+			if (fabs(x[i] - prev[i]) > difference)
+			{
+				difference = fabs(x[i] - prev[i]);
+			}
+		}
+
+		for (int i = 0; i < N; i++)
+		{
+			prev[i] = x[i];
+		}
+
+	} while (difference > eps);
 }
 
 
