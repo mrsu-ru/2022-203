@@ -231,7 +231,6 @@ void akimovada::lab4()
  */
 void akimovada::lab5()
 {
-    double eps = 1.e-19;
     double **B = new double*[N];
     for (int i = 0; i < N; i++)
     {
@@ -275,7 +274,7 @@ void akimovada::lab5()
             d[i] = x[i];
         }
 
-    } while (norm > eps);
+    } while (norm > 1.e-18);
 }
 
 
