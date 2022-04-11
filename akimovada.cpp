@@ -293,15 +293,11 @@ double* MulMatrixToVector(double* A[], double b[], int N)
 
 double ScalarMul(double x1[], double x2[], int N)
 {
-    double temp = 0, modul_x1 = 0, modul_x2 = 0;
+    double temp = 0;
     for (int i = 0; i < N; i++)
     {
-        modul_x1 += x1[i] * x1[i];
-        modul_x2 += x2[i] * x2[i];
         temp += x1[i] * x2[i];
     }
-
-    temp /= sqrt(modul_x1) * sqrt(modul_x2);
     return temp;
 
 }
