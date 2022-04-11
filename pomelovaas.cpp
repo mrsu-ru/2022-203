@@ -50,7 +50,7 @@ void pomelovaas::lab2()
 
     for (int i = N - 1, j = N - 1; (i > 0) && (j > 0); i--, j--)
     {
-        int cur = i;
+        ///int cur = i;
         temp[i] *= 1 / A[i][j];
         A[i][j] *= 1 / A[i][j];
         for (int ci = i - 1; ci >= 0; ci--)
