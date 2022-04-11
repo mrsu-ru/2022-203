@@ -308,7 +308,7 @@ double ScalarMul(double x1[], double x2[], int N)
  */
 void akimovada::lab6()
 {
-    double eps = 1.e-18, *r = new double[N], *temp, *t = new double[N];
+    double eps = 1.e-18, *r = new double[N], *temp, t;
     for (int i = 0; i < N; i++)
     {
         x[i] = b[i];
@@ -322,10 +322,10 @@ void akimovada::lab6()
 
     while (ScalarMul(r, r, N) >= eps)
     {
+        t = ScalarMul(MulMatrixToVector(A, r, N), r, N)/ScalarMul(r, r, N);
         for (int i = 0 ; i < N; i++)
         {
-            t[i] = ScalarMul(MulMatrixToVector(A, r, N), r, N)/ScalarMul(r, r, N);
-            x[i] = x[i] + t[i] * r[i];
+            x[i] = x[i] + t * r[i];
         }
 
         temp = MulMatrixToVector(A, x, N);
@@ -337,7 +337,6 @@ void akimovada::lab6()
 
     delete[]r;
     delete[]temp;
-    delete[]t;
 }
 
 
