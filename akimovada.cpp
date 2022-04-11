@@ -278,26 +278,70 @@ void akimovada::lab5()
 }
 
 
+double* MulMatrixToVector(double* A[], double b[], int N)
+{
+    double* temp = new double[N];
+    for (int i = 0; i < N; i++) {
+        temp[i] = 0;
+        for (int j = 0; j < N; j++)
+        {
+            temp[i] += A[i][j] * b[j];
+        }
+    }
+    return temp;
+}
+
+double ScalarMul(double x1[], double x2[], int N)
+{
+    double temp = 0, modul_x1 = 0, modul_x2 = 0;
+    for (int i = 0; i < N; i++)
+    {
+        modul_x1 += x1[i] * x1[i];
+        modul_x2 += x2[i] * x2[i];
+        temp += x1[i] * x2[i];
+    }
+
+    temp /= sqrt(modul_x1) * sqrt(modul_x2);
+    return temp;
+
+}
+
 
 /**
  * Метод минимальных невязок
  */
 void akimovada::lab6()
 {
-    /*double eps = 1.e-18, *x_0 = new double[N], *r_0 = new double[N], *temp = new double[N], modul = 0;
+    double eps = 1.e-18, *r = new double[N], *temp, *t = new double[N];
     for (int i = 0; i < N; i++)
     {
-        x_0[i] = b[i];
-        temp[i] = 0;
-        for (int j = 0; j < N; j++)
+        x[i] = b[i];
+    }
+
+    temp = MulMatrixToVector(A, x, N);
+    for (int i = 0; i < N; i++)
+    {
+        r[i] = b[i] - temp[i];
+    }
+
+    while (ScalarMul(r, r, N) >= eps)
+    {
+        for (int i = 0 ; i < N; i++)
         {
-            temp[i] += x_0[j]*A[i][j];
+            t[i] = ScalarMul(MulMatrixToVector(A, r, N), r, N)/ScalarMul(r, r, N);
+            x[i] = x[i] + t[i] * r[i];
         }
 
-        r_0[i] = b[i] - temp[i];
-        modul += r_0[i] * r_0[i];
-    }*/
-    
+        temp = MulMatrixToVector(A, x, N);
+        for (int i = 0; i < N; i++)
+        {
+            r[i] = b[i] - temp[i];
+        }
+    }
+
+    delete[]r;
+    delete[]temp;
+    delete[]t;
 }
 
 
