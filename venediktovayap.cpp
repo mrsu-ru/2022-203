@@ -1,4 +1,4 @@
-﻿#include "venediktovayap.h"
+﻿ #include "venediktovayap.h"
 
 /**
  * Введение в дисциплину
@@ -116,7 +116,24 @@ void venediktovayap::lab4() {
  * Метод Якоби или Зейделя
  */
 void venediktovayap::lab5() {
+     double norm, sum;
+     double eps = 1.e-15;
+     for (int i = 0; i < N; ++i) x[i] = b[i];
 
+     do {
+         norm = 0;
+         for(int i = 0; i < N; i++) {
+             sum = 0;
+             for (int j = 0; j < N; j++) {
+                 if (i != j) sum += A[i][j] * x[j];
+             }
+             sum = (b[i] - sum)/A[i][i];
+             if (norm < (fabs(sum - x[i]))) {
+                 norm = (fabs(sum - x[i]));
+             }
+             x[i] = sum;
+         }
+     } while (norm >= eps);
 }
 
 
