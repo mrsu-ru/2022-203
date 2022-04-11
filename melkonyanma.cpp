@@ -203,6 +203,10 @@ void melkonyanma::lab5()
             {
                 LU[i][j] = A[i][j];
             }
+            else
+            {
+                LU[i][j] = 0.;
+            }
         }
     }
 
