@@ -73,6 +73,7 @@ void nikishkinev::lab3()
     for (int i = N - 2; i >= 0; i--) {
         x[i] = beta[i] - alpha[i] * x[i + 1];
     }
+
     delete[] alpha;
     delete[] beta;
 }
@@ -161,7 +162,34 @@ void nikishkinev::lab5()
  */
 void nikishkinev::lab6()
 {
-
+    const double EPS = 1e-19;
+    double z = 1e9;
+    const int n = N;
+    double r[n];
+    int iter;
+    for (iter = 0; z > EPS; iter++) {
+        z = 0;
+        for (int i = 0; i < n; i++) {
+            r[i] = -b[i];
+            for (int j = 0; j < n; j++) {
+                r[i] += A[i][j] * x[j];
+            }
+        }
+        double tlower = 0, tupper = 0;
+        for (int i = 0; i < n; i++) {
+            double temp = 0;
+            for (int j = 0; j < n; j++) {
+                temp += A[i][j] * r[j];
+            }
+            tlower += temp * temp;
+            tupper += temp * r[i];
+        }
+        double t = tupper / tlower;
+        for (int i = 0; i < n; i++) {
+            if (z < abs(t * r[i])) z = abs(t * r[i]);
+            x[i] -= t * r[i];
+        }
+    }
 }
 
 
