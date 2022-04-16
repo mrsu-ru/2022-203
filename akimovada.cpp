@@ -363,6 +363,49 @@ void akimovada::lab6()
  */
 void akimovada::lab7()
 {
+    double eps = 1.e-19, *x_0 = new double[N], *temp = new double[N], lambda, *d = new double[N], beta, norm;
+    for (int i = 0; i < N; i++)
+    {
+        x_0[i] = b[i];
+    }
+
+    temp = MulMatrixToVector(A, x_0, N);
+    for (int i = 0; i < N; i++)
+    {
+        temp[i] = b[i] - temp[i];
+        d[i] = temp[i];
+    }
+
+    do {
+        lambda = ScalarMul(temp, temp, N) / ScalarMul(d, MulMatrixToVector(A, d, N), N);
+        for (int i = 0; i < N; i++) {
+            x[i] = x_0[i] + lambda * d[i];
+        }
+
+        temp = MulMatrixToVector(A, x, N);
+        for (int i = 0; i < N; i++) {
+            temp[i] = b[i] - temp[i];
+        }
+
+        beta = ScalarMul(temp, temp, N) / (lambda * ScalarMul(d, MulMatrixToVector(A, d, N), N));
+
+        for (int i = 0; i < N; i++)
+        {
+            d[i] = temp[i] + beta * d[i];
+        }
+
+        norm = fabs(x[0] - x_0[0]);
+        for (int i = 1; i < N; i++)
+        {
+            if (fabs(x[i] - x_0[i]) < norm)
+            {
+                norm = fabs(x[i] - x_0[i]);
+            }
+
+            x_0[i] = x[i];
+        }
+
+    } while(norm >= eps);
 
 }
 
