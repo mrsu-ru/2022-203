@@ -511,7 +511,33 @@ void akimovada::lab8()
  */
 void akimovada::lab9()
 {
+    double eps = 1.e-17, lambda_k, lambda_k1 = 0, *_x = new double[N], koef;
+    for (int i = 0; i < N; i++)
+    {
+        x[i] = b[i];
+    }
 
+    do
+    {
+        lambda_k = lambda_k1;
+        _x = MulMatrixToVector(A, x, N);
+        double sum1 = 0, sum2 = 0;
+        for (int i = 0; i < N; i++)
+        {
+            sum1 += _x[i];
+            sum2 += x[i];
+        }
+
+        lambda_k1 = sum1 / sum2;
+        koef = sqrt(ScalarMul(_x, _x, N));
+        for (int i = 0; i < N; i++)
+        {
+            x[i] = _x[i] / koef;
+        }
+
+    } while (abs(lambda_k1 - lambda_k) >= eps);
+
+    cout<<"Max Lambda "<<lambda_k1<<endl;
 }
 
 
