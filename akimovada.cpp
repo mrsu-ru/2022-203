@@ -308,32 +308,49 @@ double ScalarMul(double x1[], double x2[], int N)
  */
 void akimovada::lab6()
 {
-    double eps = 1.e-18, *r = new double[N], *temp, t;
+    double eps = 1.e-18, * r = new double[N], * temp, t, * x = new double[N], *x_0 = new double[N];
     for (int i = 0; i < N; i++)
     {
-        x[i] = b[i];
+        x_0[i] = b[i];
     }
 
-    temp = MulMatrixToVector(A, x, N);
+    temp = MulMatrixToVector(A, x_0, N);
+
     for (int i = 0; i < N; i++)
     {
-        r[i] = b[i] - temp[i];
+        r[i] = temp[i] - b[i];
     }
 
-    while (ScalarMul(r, r, N) >= eps)
+    temp = MulMatrixToVector(A, r, N);
+    int k = 0;
+    double norm = 0;
+    do
     {
-        t = ScalarMul(MulMatrixToVector(A, r, N), r, N)/ScalarMul(r, r, N);
-        for (int i = 0 ; i < N; i++)
+        t = ScalarMul(temp, r, N) / ScalarMul(temp, temp, N);
+        for (int i = 0; i < N; i++)
         {
-            x[i] = x[i] + t * r[i];
+            x[i] = x_0[i] - t * r[i];
         }
 
         temp = MulMatrixToVector(A, x, N);
         for (int i = 0; i < N; i++)
         {
-            r[i] = b[i] - temp[i];
+            r[i] = temp[i] - b[i];
         }
-    }
+        temp = MulMatrixToVector(A, r, N);
+
+        norm = fabs(x[0] - x_0[0]);
+        for (int i = 1; i < N; i++)
+        {
+            if (fabs(x[i] - x_0[i]) < norm)
+            {
+                norm = fabs(x[i] - x_0[i]);
+            }
+
+            x_0[i] = x[i];
+        }
+
+    } while (norm >= eps);
 
     delete[]r;
     delete[]temp;
