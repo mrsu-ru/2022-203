@@ -349,6 +349,7 @@ void akimovada::lab6()
 
             x_0[i] = x[i];
         }
+        x_0[0] = x[0];
 
     } while (norm >= eps);
 
@@ -404,6 +405,7 @@ void akimovada::lab7()
 
             x_0[i] = x[i];
         }
+        x_0[0] = x[0];
 
     } while(norm >= eps);
 
