@@ -136,6 +136,7 @@ void venediktovayap::lab5() {
     } while (norm >= eps);
 }
 
+
 double *MulVecToMatrix(int N, double *A[], double b[]) {
     double *temp = new double[N];
     for (int i = 0; i < N; i++) {
@@ -155,13 +156,13 @@ double ScalarMul(int N, double temp[], double r[]) {
     return k;
 }
 
-
 /**
  * Метод минимальных невязок
  */
 void venediktovayap::lab6() {
 
     double *r = new double[N];
+    double *xk = new double[N];
     double eps = 1.e-17;
     double *x1 = b;
     double t;
@@ -179,7 +180,6 @@ void venediktovayap::lab6() {
         Scalar2 = ScalarMul(N, Ar, Ar);
         t = Scalar1 / Scalar2;
 
-        double *xk = new double[N];
         for (int i = 0; i < N; i++) {
             xk[i] = x1[i] - t * r[i];
         }
@@ -192,12 +192,14 @@ void venediktovayap::lab6() {
             }
         }
         x1 = xk;
+
     } while (maxDelta > eps);
 
     for (int i = 0; i < N; i++) {
         x[i] = x1[i];
     }
-
+    delete[] r;
+    delete[] xk;
 }
 
 
