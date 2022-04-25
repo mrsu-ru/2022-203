@@ -86,6 +86,36 @@ void negryame::lab3()
  */
 void negryame::lab4()
 {
+	double* App = new double[N]
+    double  tau = 0.001
+    double  eps = 0.0000001;
+	for (int i = 0; i < N; i++)
+		x[i] = 0;
+
+	do
+	{
+		for (int i = 0; i < N; i++)
+		{
+			double temp = 0;
+			for (int j = 0; j < N; j++)
+				temp += A[i][j] * x[j];
+
+			App[i] = x[i] + tau * (b[i] - temp);
+		}
+
+		double max = 0;
+		for (int i = 0; i < N; i++)
+		{
+			if (fabs(x[i] - App[i]) > max) max = fabs(x[i] - App[i]);
+			x[i] = App[i];
+		}
+
+		if (max < eps) break;
+	} while (true);
+
+	delete[] App;
+}
+
 
 }
 
