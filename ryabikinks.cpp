@@ -257,8 +257,8 @@ void ryabikinks::lab6()
     double x1[N];
     double t = 0.0;
     double norm;
-    fuller(r);
-    fuller(x1);
+    fuller(r,N);
+    fuller(x1,N);
     for (int i = 0; i < N; i++)
     {
         x1[i] = b[i];
@@ -313,10 +313,10 @@ void ryabikinks::lab7()
     double r[N];
     double r1[N];
     double p[N];
-    fuller(x1);
-    fuller(r);
-    fuller(r1);
-    fuller(p);
+    fuller(x1,N);
+    fuller(r,N);
+    fuller(r1,N);
+    fuller(p,N);
     double alpha, beta = 0.0;
     double norm;
 
