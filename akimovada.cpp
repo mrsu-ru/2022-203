@@ -450,7 +450,7 @@ void akimovada::lab8()
     {
         for (int l = 0; l < N; l++)
         {
-            if (A[k][l] > A[i][j])
+            if ((abs(A[k][l]) > abs(A[i][j]))
             {
                 i = k;
                 j = l;
