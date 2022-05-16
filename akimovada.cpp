@@ -322,7 +322,7 @@ void akimovada::lab6()
     }
 
     temp = MulMatrixToVector(A, r, N);
-    int k = 0;
+    ///int k = 0;
     double norm = 0;
     do
     {
