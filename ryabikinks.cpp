@@ -332,6 +332,7 @@ void ryabikinks::lab7()
         r[i] = b[i] - buffer[i];
     }
     double* bufferAp = new double[N];
+    double* bufferAr = new double[N];
     for (int i = 0; i < N; i++)
     {
         p[i] = r[i];
@@ -370,6 +371,7 @@ void ryabikinks::lab7()
 
     double[] buffer;
     double[] bufferAp;
+    double[] bufferAr;
 }
 
 
