@@ -439,7 +439,7 @@ double** MulMatrix(double *matrix1[], double *matrix2[], int N)
 void akimovada::lab8()
 {
     double eps = 1.e-18, phi, **H = new double*[N], **H_T = new double*[N];
-    int i = 0, j = 0;
+    int i = 0, j = 1;
     for (int k = 0; k < N; k++)
     {
         H[k] = new double[N];
@@ -450,10 +450,13 @@ void akimovada::lab8()
     {
         for (int l = 0; l < N; l++)
         {
-            if (A[k][l] > A[i][j])
+            if (k != l)
             {
-                i = k;
-                j = l;
+                if ((abs(A[k][l]) > abs(A[i][j]))
+                {
+                    i = k;
+                    j = l;
+                }
             }
         }
     }
