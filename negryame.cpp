@@ -135,7 +135,7 @@ void negryame::lab4()
 }
 
 
-}
+
 
 
 
