@@ -308,7 +308,7 @@ double ScalarMul(double x1[], double x2[], int N)
  */
 void akimovada::lab6()
 {
-    double eps = 1.e-18, * r = new double[N], * temp, t, * x = new double[N], *x_0 = new double[N];
+    double eps = 1.e-18, * r = new double[N], * temp, t, *x_0 = new double[N];
     for (int i = 0; i < N; i++)
     {
         x_0[i] = b[i];
@@ -469,8 +469,15 @@ void akimovada::lab8()
         {
             for (int l = 0; l < N; l++)
             {
-                H[k][l] = 0;
-                H_T[k][l] = 0;
+                if (k == l)
+                {
+                    H[k][l] = 1;
+                    H_T[k][l] = 1;
+                }
+                else {
+                    H[k][l] = 0;
+                    H_T[k][l] = 0;
+                }
             }
         }
 
