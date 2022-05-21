@@ -369,9 +369,9 @@ void ryabikinks::lab7()
         }
     } while (norm >= eps);
 
-    double[] buffer;
-    double[] bufferAp;
-    double[] bufferAr;
+    delete[] buffer;
+    delete[] bufferAp;
+    delete[] bufferAr;
 }
 
 
