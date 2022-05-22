@@ -99,6 +99,43 @@ void prokopenkoas::lab3()
  */
 void prokopenkoas::lab4()
 {
+    double** S = new double* [N];
+    for (int i = 0; i < N; i++) {
+        S[i] = new double[N];
+        for (int j = 0; j < N; j++) S[i][j] = 0;
+    }
+
+    for (int i = 0; i < N; i++) {
+        for (int j = i; j < N; j++) {
+            if (j == i) {
+                if (i == 0) {
+                    S[i][i] = sqrt(A[0][0]);
+                }
+                else {
+                    for (int k = 0; k < i; k++) A[i][i] -= S[k][i] * S[k][i];
+                    S[i][i] = sqrt(A[i][i]);
+                }
+            }
+            else {
+                for (int k = 0; k < j; k++) A[i][j] -= S[k][i] * S[k][j];
+                S[i][j] = A[i][j] / S[i][i];
+            }
+        }
+    }
+
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < i; j++) b[i] -= S[j][i] * b[j];
+        b[i] /= S[i][i];
+    }
+
+    for (int i = N - 1; i >= 0; i--) {
+        for (int k = i + 1; k < N; k++) b[i] -= S[i][k] * x[k];
+        x[i] = b[i] / S[i][i];
+    }
+
+    for (int i = 0; i < N; i++) delete[] S[i];
+    delete[] S;
+
 
 }
 
@@ -109,6 +146,44 @@ void prokopenkoas::lab4()
  */
 void prokopenkoas::lab5()
 {
+    double norm, sum;
+    double eps = 1.e-15;
+    for (int i = 0; i < N; ++i) x[i] = b[i];
+
+    do {
+        norm = 0;
+        for (int i = 0; i < N; i++) {
+            sum = 0;
+            for (int j = 0; j < N; j++) {
+                if (i != j) sum += A[i][j] * x[j];
+            }
+            sum = (b[i] - sum) / A[i][i];
+            if (norm < (fabs(sum - x[i]))) {
+                norm = (fabs(sum - x[i]));
+            }
+            x[i] = sum;
+        }
+    } while (norm >= eps);
+}
+
+
+double* MulVecToMatrix(int N, double* A[], double b[]) {
+    double* temp = new double[N];
+    for (int i = 0; i < N; i++) {
+        temp[i] = 0;
+        for (int j = 0; j < N; j++) {
+            temp[i] += A[i][j] * b[i];
+        }
+    }
+    return temp;
+}
+
+double ScalarMul(int N, double temp[], double r[]) {
+    double k = 0;
+    for (int i = 0; i < N; i++) {
+        k += temp[i] * r[i];
+    }
+    return k;
 
 }
 
