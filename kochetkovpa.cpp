@@ -102,7 +102,6 @@ void kochetkovpa::lab4()
             for (int l = 0; l <= i - 1; l++) subSum += S[l][j] * S[l][i] * D[l][l];
             S[i][j] = (A[i][j] - subSum)/S[i][i]*D[i][i];
         }
-        //Обратный ход
 
         double y[N];
         y[0] = b[0] / S[0][0];
