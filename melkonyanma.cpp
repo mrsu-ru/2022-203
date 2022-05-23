@@ -1,10 +1,8 @@
 ﻿#include "melkonyanma.h"
+#include <iostream>
+#include <math.h>
 
-void MatrixTrans(double **matrix, double **tMatrix, int N);
-void init_matrix(double *matrix, int N);
-void init_matrix(double **matrix, int N);
-void create_dynamic_array(double **array, int N);
-void delete_dynamic_array(double **array, int N);
+#define epsilon 1e-20
 
 /**
  * Введение в дисциплину
@@ -12,61 +10,6 @@ void delete_dynamic_array(double **array, int N);
 void melkonyanma::lab1()
 {
     cout << "Hello World!" << endl;
-}
-
-void method_Gauss(double **A, double *b, int N)
-{
-    for (int row = 0, column = 0; column < N; ++row, ++column)
-    {
-        int max = row;
-
-        for (int i = row + 1; i < N; ++i)
-        {
-            if (fabs(A[i][column]) > fabs(A[max][column]))
-            {
-                max = i;
-            }
-        }
-
-        if (max != row)
-        {
-            swap(A[row], A[max]);
-            swap(b[row], b[max]);
-        }
-
-        double mainElem = A[row][column];
-
-        for (int i = 0; i < N; ++i)
-        {
-            if (A[row][i] == 0)
-            {
-                continue;
-            }
-            A[row][i] /= mainElem;
-        }
-
-        b[row] /= mainElem;
-
-        for (int i = row + 1; i < N; ++i)
-        {
-            double a = A[i][column];
-            for (int j = 0; j < N; ++j)
-            {
-                A[i][j] -= A[row][j] * a;
-            }
-            b[i] -= b[row] * a;
-        }
-    }
-
-    for (int i = N - 1; i > 0; --i)
-    {
-        double a = A[i][i];
-        for (int k = i - 1; k >= 0; --k)
-        {
-            b[k] -= b[i] * A[k][i];
-            A[k][i] -= a * A[k][i];
-        }
-    }
 }
 
 /**
@@ -190,7 +133,6 @@ void melkonyanma::lab4()
  */
 void melkonyanma::lab5()
 {
-    double eps = 1e-20;
     double xk[N];
     double norm;
     double LU[N][N];
@@ -203,7 +145,8 @@ void melkonyanma::lab5()
             {
                 LU[i][j] = A[i][j];
             }
-            else
+
+            if (i == j)
             {
                 LU[i][j] = 0.;
             }
@@ -230,11 +173,16 @@ void melkonyanma::lab5()
             x[i] = (1 / A[i][i]) * (b[i] - summ);
 
             if (i == 0)
+            {
                 norm = fabs(x[i] - xk[i]);
+            }
+
             if (fabs(x[i] - xk[i]) > norm)
+            {
                 norm = fabs(x[i] - xk[i]);
+            }
         }
-    } while (eps <= norm);
+    } while (sqrt(norm) >= epsilon);
 }
 
 /**
@@ -242,20 +190,132 @@ void melkonyanma::lab5()
  */
 void melkonyanma::lab6()
 {
+    double norm = 1e-1;
+    double rk[N];
+    init_matrix(rk, N);
+
+    for (int i = 0; i < N; ++i)
+    {
+        x[i] = 1e-2;
+    }
+
+    do
+    {
+        double *Ax = MatrixMultOnVect(A, x, N);
+
+        for (int i = 0; i < N; ++i)
+        {
+            rk[i] = Ax[i] - b[i];
+        }
+
+        double *Ar = MatrixMultOnVect(A, rk, N);
+        double tau = 0;
+
+        tau = (scalar(Ar, rk, N) / scalar(Ar, Ar, N));
+
+        for (int i = 0; i < N; i++)
+        {
+            double prevX = x[i];
+            x[i] = prevX - tau * rk[i];
+
+            if (fabs(x[i] - prevX) < norm)
+            {
+                norm = fabs(x[i] - prevX);
+            }
+        }
+
+        delete[] Ar;
+        delete[] Ax;
+
+    } while (sqrt(norm) >= epsilon);
 }
 
 /**
  * Метод сопряженных градиентов
  */
-void melkonyanma::lab7()
-{
-}
+void melkonyanma::lab7() {}
 
 /**
  * Метод вращения для нахождения собственных значений матрицы
  */
 void melkonyanma::lab8()
 {
+    double eps = 1e-1;
+    double max_element;
+    double c, s;
+    int posMaxElementI, posMaxElementJ;
+
+    do
+    {
+        max_element = 0.;
+
+        for (int i = 0; i < N - 1; ++i)
+        {
+            for (int j = i + 1; j < N; ++j)
+            {
+                if (abs(A[i][j]) > max_element)
+                {
+                    max_element = abs(A[i][j]);
+                    posMaxElementI = i;
+                    posMaxElementJ = j;
+                }
+            }
+        }
+
+        double aii, ajj;
+        double teta = 0.;
+
+        aii = A[posMaxElementI][posMaxElementI];
+        ajj = A[posMaxElementJ][posMaxElementJ];
+
+        if ((aii - ajj) < eps)
+        {
+            teta = atan(1);
+        }
+        else
+        {
+            teta = atan((2 * max_element) / (aii - ajj)) / 2;
+        }
+
+        c = cos(teta);
+        s = sin(teta);
+
+        double **H = new double *[N];
+        create_dynamic_array(H, N);
+        double **transH = new double *[N];
+        create_dynamic_array(transH, N);
+
+        for (int i = 0; i < N; ++i)
+        {
+            for (int j = 0; j < N; ++j)
+            {
+                if (i == j)
+                    H[i][j] = 1;
+                else
+                    H[i][j] = 0;
+            }
+        }
+
+        H[posMaxElementI][posMaxElementI] = H[posMaxElementJ][posMaxElementJ] = c;
+        H[posMaxElementI][posMaxElementJ] = -s;
+        H[posMaxElementJ][posMaxElementI] = s;
+
+        MatrixTrans(H, transH, N);
+
+        A = MatrixMultOnMatrix(MatrixMultOnMatrix(transH, A, N), H, N);
+
+        delete_dynamic_array(H, N);
+        delete_dynamic_array(transH, N);
+        delete[] H;
+        delete[] transH;
+
+    } while (max_element >= eps);
+
+    for (int i = 0; i < N; ++i)
+    {
+        printf("Lambda(%d) = %.4f\n", i + 1, A[i][i]);
+        x[i] = A[i][i];
+    }
 }
 
 /**
@@ -263,52 +323,43 @@ void melkonyanma::lab8()
  */
 void melkonyanma::lab9()
 {
-}
+    double AbsMaxEigenvalue;
+    double Eigenvalue = 0.;
+    double eps = 1e-8;
+    double *xPrev = new double[N];
+    double *xNew = new double[N];
 
-void MatrixTrans(double **matrix, double **tMatrix, int N)
-{
     for (int i = 0; i < N; ++i)
     {
-        for (int j = 0; j < N; ++j)
+        xPrev[i] = b[i];
+    }
+
+    do
+    {
+        AbsMaxEigenvalue = Eigenvalue;
+
+        xNew = MatrixMultOnVect(A, xPrev, N);
+
+        double s1 = 0, s2 = 0;
+        for (int i = 0; i < N; ++i)
         {
-            tMatrix[i][j] = matrix[j][i];
+            s1 += xNew[i];
+            s2 += xPrev[i];
         }
-    }
-}
 
-void init_matrix(double *matrix, int N)
-{
-    for (int i = 0; i < N; ++i)
-    {
-        matrix[i] = 0.;
-    }
-}
+        Eigenvalue = s1 / s2;
 
-void init_matrix(double **matrix, int N)
-{
-    for (int i = 0; i < N; ++i)
-    {
-        for (int j = 0; j < N; ++j)
+        for (int i = 0; i < N; ++i)
         {
-            matrix[i][j] = 0.;
+            xPrev[i] = xNew[i] / scalar(xNew, xNew, N);
         }
-    }
-}
 
-void create_dynamic_array(double **array, int N)
-{
-    for (int i = 0; i < N; ++i)
-    {
-        array[i] = new double[N];
-    }
-}
+    } while (fabs(AbsMaxEigenvalue - Eigenvalue) >= eps);
 
-void delete_dynamic_array(double **array, int N)
-{
-    for (int i = 0; i < N; ++i)
-    {
-        delete[] array[i];
-    }
+    delete[] xNew;
+    delete[] xPrev;
+
+    cout << "Absolute max eigenvalue = " << AbsMaxEigenvalue << endl;
 }
 
 std::string melkonyanma::get_name()
