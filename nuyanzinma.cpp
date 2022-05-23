@@ -465,7 +465,7 @@ void nuyanzinma::lab7()
 	}
 }
 
-double** transposeMatrix(double N, double**& M)
+double** transposeMatrix(int N, double**& M)
 {
 	double** tM = new double*[N];
 	for (int i = 0; i < N; i++)
