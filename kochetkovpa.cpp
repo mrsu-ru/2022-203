@@ -132,9 +132,57 @@ void kochetkovpa::lab4()
  */
 void kochetkovpa::lab5()
 {
+    double xk[N];
+    double norm;
+    double LU[N][N];
 
+    for (int i = 0; i < N; ++i)
+    {
+        for (int j = 0; j < N; ++j)
+        {
+            if (i != j)
+            {
+                LU[i][j] = A[i][j];
+            }
+
+            if (i == j)
+            {
+                LU[i][j] = 0.;
+            }
+        }
+    }
+
+    for (int i = 0; i < N; ++i)
+        x[i] = b[i] / A[i][i];
+
+    do
+    {
+        for (int i = 0; i < N; ++i)
+        {
+            for (int i = 0; i < N; ++i)
+                xk[i] = x[i];
+
+            double summ = 0.;
+
+            for (int j = 0; j < N; ++j)
+            {
+                summ += LU[i][j] * xk[j];
+            }
+
+            x[i] = (1 / A[i][i]) * (b[i] - summ);
+
+            if (i == 0)
+            {
+                norm = fabs(x[i] - xk[i]);
+            }
+
+            if (fabs(x[i] - xk[i]) > norm)
+            {
+                norm = fabs(x[i] - xk[i]);
+            }
+        }
+    } while (sqrt(norm) >= epsilon);
 }
-
 
 
 /**
