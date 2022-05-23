@@ -282,6 +282,7 @@ double* productOfMatrixAndVector(int N, double**& A, double*& d)
  */
 void nuyanzinma::lab5()
 {
+	//Метод Якоби
 	double** D = new double* [N];
 	double** Drev = new double* [N];
 	double** DminusA = new double* [N];
@@ -400,14 +401,87 @@ void nuyanzinma::lab6()
 	}
 }
 
+double scalarProduct(int N, double*& a, double*& b)
+{
+	double result = 0;
+	for (int i = 0; i < N; i++)
+	{
+		result += a[i] * b[i];
+	}
 
+	return result;
+}
+
+double* sumOfVectors(int N, double*& a, double*& b, double a1, double b1)
+{
+	double* result = new double[N];
+
+	for (int i = 0; i < N; i++)
+	{
+		result[i] = a1 * a[i] + b1 * b[i];
+	}
+
+	return result;
+}
 
 /**
  * Метод сопряженных градиентов
  */
 void nuyanzinma::lab7()
 {
+	const double eps = 1e-40;
+	double* buffer = productOfMatrixAndVector(N, A, b); // Вычисление Ax0, изначально x0 = b
+	double* rk = new double[N];
+	for (int i = 0; i < N; i++) // Вычисление r0
+	{
+		rk[i] = b[i] - buffer[i];
+	}
+	double* zk = rk; // Вычисление z0
+	double* xk = b;
+	double* xk1 = new double[N];
+	double* rk1 = new double[N];
+	double* zk1 = new double[N];
+	double otnNev;
 
+	do 
+	{
+		buffer = productOfMatrixAndVector(N, A, zk);
+		double alphaK = scalarProduct(N, rk, rk) / scalarProduct(N, buffer, zk);
+		xk1 = sumOfVectors(N, xk, zk, 1, alphaK);
+		rk1 = sumOfVectors(N, rk, buffer, 1, -alphaK);
+		double betaK = scalarProduct(N, rk1, rk1) / scalarProduct(N, rk, rk);
+		zk1 = sumOfVectors(N, rk1, zk, 1, betaK);
+		
+		zk = zk1;
+		rk = rk1;
+		xk = xk1;
+		
+		otnNev = sqrt(scalarProduct(N, rk, rk) / scalarProduct(N, b, b));
+	} while (abs(otnNev) > eps);
+
+	for (int i = 0; i < N; i++)
+	{
+		x[i] = xk[i];
+	}
+}
+
+double** transposeMatrix(int N, double**& M)
+{
+	double** tM = new double*[N];
+	for (int i = 0; i < N; i++)
+	{
+		tM[i] = new double[N];
+	}
+
+	for (int i = 0; i < N; i++)
+	{
+		for (int j = 0; j < N; j++)
+		{
+			tM[i][j] = M[j][i];
+		}
+	}
+
+	return tM;
 }
 
 
@@ -416,7 +490,72 @@ void nuyanzinma::lab7()
  */
 void nuyanzinma::lab8()
 {
+	double eps = 1e-1;
 
+	double** U = new double* [N];
+	for (int i = 0; i < N; i++)
+	{
+		U[i] = new double[N];
+	}
+
+	for (int i = 0; i < N; i++)
+	{
+		for (int j = 0; j < N; j++)
+		{
+			U[i][j] = i == j ? 1 : 0;
+		}
+	}
+
+	bool flag = false;
+	do
+	{
+		flag = false;
+		int iF = 0, jF = 0;
+
+		for (int i = 0; i < N; i++)
+		{
+			for (int j = 0; j < N; j++)
+			{
+				if (i != j && abs(A[i][j]) > abs(A[iF][jF]))
+				{
+					iF = i; jF = j;
+				}
+			}
+		}
+
+		double p = 2 * A[iF][jF] / (A[iF][iF] - A[jF][jF]);
+		double s = sin(0.5 * atan(p));
+		double c = cos(0.5 * atan(p));
+
+		U[iF][iF] = c; U[iF][jF] = -s;
+		U[jF][iF] = s; U[jF][jF] = c;
+
+		double** trU = transposeMatrix(N, U);
+
+		double** trUonA = productOfMatricies(N, trU, A);
+
+		A = productOfMatricies(N, trUonA, U);
+	
+		for (int i = 0; i < N; i++)
+		{
+			for (int j = 0; j < N; j++)
+			{
+				if (i != j && abs(A[i][j]) > eps)
+				{
+					flag = true;
+				}
+			}
+		}
+
+		U[iF][iF] = 1; U[iF][jF] = 0;
+		U[jF][iF] = 0; U[jF][jF] = 1;
+
+	} while (flag);
+
+	for (int i = 0; i < N; i++)
+	{
+		x[i] = A[i][i];
+	}
 }
 
 
@@ -425,7 +564,30 @@ void nuyanzinma::lab8()
  */
 void nuyanzinma::lab9()
 {
+	double EPS = 1e-3;
+	double* prevY = new double[N];
+	for (int i = 0; i < N; i++)
+	{
+		prevY[i] = 1;
+	}
+	double* nextY = new double[N];
+	double D = 0;
+	double prevLambda = 0;
+	double nextLambda = 0;
 
+	do {
+		nextY = productOfMatrixAndVector(N, A, prevY);
+
+		nextLambda = nextY[N - 1] / prevY[N - 1];
+
+		D = abs(nextLambda - prevLambda);
+
+		prevLambda = nextLambda;
+		prevY = nextY;
+
+	} while (D > EPS);
+
+	cout << nextLambda << endl;
 }
 
 
