@@ -308,7 +308,7 @@ double ScalarMul(double x1[], double x2[], int N)
  */
 void akimovada::lab6()
 {
-    double eps = 1.e-18, * r = new double[N], * temp, t, * x = new double[N], *x_0 = new double[N];
+    double eps = 1.e-18, * r = new double[N], * temp, t, *x_0 = new double[N];
     for (int i = 0; i < N; i++)
     {
         x_0[i] = b[i];
@@ -427,6 +427,7 @@ double** MulMatrix(double *matrix1[], double *matrix2[], int N)
         Matrix[i] = new double[N];
         for (int j = 0; j < N; j++)
         {
+            Matrix[i][j] = 0;
             for (int k = 0; k < N; k++)
             {
                 Matrix[i][j] += matrix1[i][k] * matrix2[k][j];
@@ -438,19 +439,19 @@ double** MulMatrix(double *matrix1[], double *matrix2[], int N)
 
 void akimovada::lab8()
 {
-    double eps = 1.e-18, phi, **H = new double*[N], **H_T = new double*[N];
-    int i = 0, j = 1;
+    double eps = 1.e-18, phi, **H = new double*[N], **H_T = new double*[N], norm;
+
     for (int k = 0; k < N; k++)
     {
         H[k] = new double[N];
         H_T[k] = new double[N];
     }
 
-    for (int k = 0; k < N; k++)
-    {
-        for (int l = 0; l < N; l++)
+    do {
+        int i = 0, j = 1;
+        for (int k = 0; k < N; k++)
         {
-            if (k != l)
+            for (int l = k + 1; l < N; l++)
             {
                 if (abs(A[k][l]) > abs(A[i][j]))
                 {
@@ -459,40 +460,38 @@ void akimovada::lab8()
                 }
             }
         }
-    }
 
-    while (abs(A[i][j]) >= eps) {
-
+        norm = abs(A[i][j]);
+        if (norm <=eps)
+        {
+            break;
+        }
         phi = 0.5 * atan(2 * A[i][j] / (A[i][i] - A[j][j]));
 
         for (int k = 0; k < N; k++)
         {
             for (int l = 0; l < N; l++)
             {
-                H[k][l] = 0;
-                H_T[k][l] = 0;
+                if (k == l)
+                {
+                    H[k][l] = 1;
+                    H_T[k][l] = 1;
+                }
+                else {
+                    H[k][l] = 0;
+                    H_T[k][l] = 0;
+                }
             }
         }
 
         H[i][i] = cos(phi); H_T[i][i] = cos(phi);
+
         H[j][j] = cos(phi); H_T[j][j] = cos(phi);
-        H[i][j] = -sin(phi); H_T[j][i] = -sin(phi);
-        H[j][i] = sin(phi); H_T[i][j] = sin(phi);
-
+        cout<<H[i][i]<<" "<<H[j][j]<<endl;
+        H[i][j] = -sin(phi); H_T[j][i] = sin(phi);
+        H[j][i] = sin(phi); H_T[i][j] = -sin(phi);
         A = MulMatrix(MulMatrix(A, H, N), H_T, N);
-
-        for (int k = 0; k < N; k++)
-        {
-            for (int l = 0; l < N; l++)
-            {
-                if (A[k][l] > A[i][j])
-                {
-                    i = k;
-                    j = l;
-                }
-            }
-        }
-    }
+    } while (norm >= eps);
 
     for (int k = 0; k < N; k++)
     {
