@@ -88,5 +88,5 @@ void zinkinakv::lab9()
 
 std::string zinkinakv::get_name()
 {
-  return "R.V. Zhalnin";
+  return "K. V. Zinkina";
 }
