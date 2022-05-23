@@ -60,4 +60,5 @@ class turaevdv : public lab
 
   virtual std::string get_name();
 
+    double **createSLOUMatrix(int size);
 };
