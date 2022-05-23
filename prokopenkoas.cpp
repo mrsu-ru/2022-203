@@ -99,6 +99,45 @@ void prokopenkoas::lab3()
  */
 void prokopenkoas::lab4()
 {
+    double S[N][N];
+    int D[N][N];
+    for (int i = 0; i < N; i++) {
+
+        double Sum = 0;
+        for (int l = 0; l <= i - 1; l++) {
+            Sum += S[l][i] * S[l][i] * D[l][l];
+        }
+
+        int sign = (A[i][i] - Sum) < 0;
+        D[i][i] = (int)pow(-1, sign);
+
+        S[i][i] = sqrt(abs(A[i][i] - Sum));
+        for (int j = 0; j < i; j++) S[i][j] = 0.0;
+        for (int j = i + 1; j < N; j++) {
+            double Sum = 0;
+            for (int l = 0; l <= i - 1; l++) Sum += S[l][j] * S[l][i] * D[l][l];
+            S[i][j] = (A[i][j] - Sum) / S[i][i] * D[i][i];
+        }
+
+        // обратно
+
+        double y[N];
+        y[0] = b[0] / S[0][0];
+        for (int i = 1; i < N; i++) {
+            double Sum = 0;
+            for (int j = 0; j <= i - 1; j++) Sum += S[j][i] * y[j];
+            y[i] = b[i] - Sum;
+            y[i] /= S[i][i];
+        }
+        x[N - 1] = y[N - 1] / S[N - 1][N - 1];
+        for (int i = N - 2; i >= 0; i--) {
+            double Sum = 0;
+            for (int k = i + 1; k <= N - 1; k++) Sum += S[i][k] * x[k];
+            x[i] = y[i] - Sum;
+            x[i] /= S[i][i];
+        }
+
+    }
 
 }
 
@@ -109,8 +148,31 @@ void prokopenkoas::lab4()
  */
 void prokopenkoas::lab5()
 {
+    double* toka = new double[N];
+    double eps = 1e-20;
+    double norm;
+    for (int i = 0; i < N; i++) x[i] = b[i] / A[i][i];
 
+    do {
+        for (int i = 0; i < N; i++) {
+
+            for (int j = 0; j < N; j++) toka[j] = x[j];
+
+            double lowSum = 0, uppSum = 0;
+
+            for (int j = 0; j < i; j++) lowSum += A[i][j] * toka[j];
+            for (int j = i + 1; j < N; j++) uppSum += A[i][j] * toka[j];
+
+            x[i] = 1 / A[i][i] * (b[i] - lowSum - uppSum);
+
+            if (i == 0) norm = abs(x[i] - toka[i]);
+            if (abs(x[i] - toka[i]) > norm) norm = abs(x[i] - toka[i]);
+
+        }
+
+    } while (norm >= eps);
 }
+
 
 
 
