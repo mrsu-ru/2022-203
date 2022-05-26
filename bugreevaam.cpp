@@ -52,7 +52,28 @@ void bugreevaam::lab2()
  */
 void bugreevaam::lab3()
 {
+    double* alpha;
+    alpha = new double[N];
 
+    double* beta;
+    beta = new double[N];
+
+    int i;
+
+    alpha[0] = A[0][1] / A[0][0];
+
+    beta[0] = b[0] / A[0][0];
+
+    for (i = 1; i < N; i++) {
+        alpha[i] = A[i][i + 1] / (A[i][i] - A[i][i - 1] * alpha[i - 1]);
+        beta[i] = (b[i] - beta[i - 1] * A[1][0]) / (A[i][i] - A[i][i - 1] * alpha[i - 1]);
+    }
+
+    x[N - 1] = beta[N - 1];
+
+    for (i = N - 2; i >= 0; i--) {
+        x[i] = beta[i] - alpha[i] * x[i + 1];
+    }
 }
 
 
@@ -62,7 +83,7 @@ void bugreevaam::lab3()
  */
 void bugreevaam::lab4()
 {
-
+    
 }
 
 
