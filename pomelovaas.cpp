@@ -165,18 +165,92 @@ void pomelovaas::lab4()
  */
 void pomelovaas::lab5()
 {
+    double norm, sum;
+    double eps = 1.e-15;
+    for (int i = 0; i < N; ++i) x[i] = b[i];
 
+    do {
+        norm = 0;
+        for (int i = 0; i < N; i++) {
+            sum = 0;
+            for (int j = 0; j < N; j++) {
+                if (i != j) sum += A[i][j] * x[j];
+            }
+            sum = (b[i] - sum) / A[i][i];
+            if (norm < (fabs(sum - x[i]))) {
+                norm = (fabs(sum - x[i]));
+            }
+            x[i] = sum;
+        }
+    } while (norm >= eps);
 }
 
 
+double *MulVecToMat(int N, double *A[], double b[]) {
+    double *temp = new double[N];
+    for (int i = 0; i < N; i++) {
+        temp[i] = 0;
+        for (int j = 0; j < N; j++) {
+            temp[i] += A[i][j] * b[i];
+        }
+    }
+    return temp;
+}
+
+double ScMul(int N, double temp[], double r[]) {
+    double k = 0;
+    for (int i = 0; i < N; i++) {
+        k += temp[i] * r[i];
+    }
+    return k;
+}
 
 /**
  * Метод минимальных невязок
  */
 void pomelovaas::lab6()
 {
+    double *r = new double[N];
+    double *xk = new double[N];
+    double eps = 1.e-17;
+    double *x1 = b;
+    double t;
+    double maxDelta;
+    do {
+        double *temp = MulVecToMat(N, A, x1);
 
+        for (int i = 0; i < N; i++) {
+            r[i] = temp[i] - b[i];
+        }
+        double *Ar = MulVecToMat(N, A, r);
+
+        double Scalar1, Scalar2;
+        Scalar1 = ScMul(N, Ar, r);
+        Scalar2 = ScMul(N, Ar, Ar);
+        t = Scalar1 / Scalar2;
+
+        for (int i = 0; i < N; i++) {
+            xk[i] = x1[i] - t * r[i];
+        }
+        maxDelta = abs(xk[0] - x1[0]);
+
+        for (int i = 1; i < N; i++) {
+            double delta = abs(xk[i] - x1[i]);
+            if (delta > maxDelta) {
+                maxDelta = delta;
+            }
+        }
+        x1 = xk;
+
+    } while (maxDelta > eps);
+
+    for (int i = 0; i < N; i++) {
+        x[i] = x1[i];
+    }
+    delete[] r;
+    delete[] xk;
 }
+
 
 
 
