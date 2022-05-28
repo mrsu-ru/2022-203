@@ -174,7 +174,7 @@ void prokopenkoas::lab5()
 }
 
 
-double* MulVecToMatrix(int N, double* A[], double b[]) {
+double* MulVecToMatrica(int N, double* A[], double b[]) {
     double* temp = new double[N];
     for (int i = 0; i < N; i++) {
         temp[i] = 0;
@@ -185,7 +185,7 @@ double* MulVecToMatrix(int N, double* A[], double b[]) {
     return temp;
 }
 
-double ScalarMul(int N, double temp[], double r[]) {
+double ScalarMullet(int N, double temp[], double r[]) {
     double k = 0;
     for (int i = 0; i < N; i++) {
         k += temp[i] * r[i];
@@ -205,16 +205,16 @@ void prokopenkoas::lab6()
     double t;
     double maxDelta;
     do {
-        double* temp = MulVecToMatrix(N, A, x1);
+        double* temp = MulVecToMatrica(N, A, x1);
 
         for (int i = 0; i < N; i++) {
             r[i] = temp[i] - b[i];
         }
-        double* Ar = MulVecToMatrix(N, A, r);
+        double* Ar = MulVecToMatrica(N, A, r);
 
         double Scalar1, Scalar2;
-        Scalar1 = ScalarMul(N, Ar, r);
-        Scalar2 = ScalarMul(N, Ar, Ar);
+        Scalar1 = ScalarMullet(N, Ar, r);
+        Scalar2 = ScalarMullet(N, Ar, Ar);
         t = Scalar1 / Scalar2;
 
         for (int i = 0; i < N; i++) {
@@ -250,7 +250,7 @@ void prokopenkoas::lab7()
 }
 
 
-double** TransposeMatrix(double**& m, int n) {
+double** TransposeMatrica(double**& m, int n) {
     double** temp = new double* [n];
     for (int i = 0; i < n; ++i) {
         temp[i] = new double[n];
@@ -266,7 +266,7 @@ double** TransposeMatrix(double**& m, int n) {
 }
 
 
-double** MulMatrixes(double**& m1, double**& m2, int n) {
+double** MulMatricaa(double**& m1, double**& m2, int n) {
     double** temp = new double* [n];
     for (int i = 0; i < n; ++i) {
         temp[i] = new double[n];
@@ -331,9 +331,9 @@ void prokopenkoas::lab8()
         m_H[maxi][maxi] = cos(Phi);
         m_H[maxj][maxj] = cos(Phi);
 
-        double** t_H = TransposeMatrix(m_H, N);
+        double** t_H = TransposeMatrica(m_H, N);
 
-        double** t_A = MulMatrixes(t_H, A, N);
+        double** t_A = MulMatricaa(t_H, A, N);
 
         A = MulMatrixes(t_A, m_H, N);
     } while (MaxEl >= eps);
@@ -360,7 +360,7 @@ void prokopenkoas::lab9()
     do {
         double sum1 = 0, sum2 = 0;
         lambda_k = lambda_k1;
-        x_ = MulVecToMatrix(N, A, x);
+        x_ = MulVecToMatrica(N, A, x);
 
         for (int i = 0; i < N; i++) {
             sum1 += x_[i];
@@ -368,7 +368,7 @@ void prokopenkoas::lab9()
         }
 
         lambda_k1 = sum1 / sum2;
-        k = sqrt(ScalarMul(N, x_, x_));
+        k = sqrt(ScalarMullet(N, x_, x_));
         for (int i = 0; i < N; i++) {
             x[i] = x_[i] / k;
         }
