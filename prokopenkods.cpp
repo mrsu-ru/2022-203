@@ -275,7 +275,7 @@ void prokopenkods::lab8()
 	delete[] C;
 }
 
-double* MulVecToMatrix(int N, double* A[], double b[]) {
+double* MulVecToMx(int N, double* A[], double b[]) {
 	double* temp = new double[N];
 	for (int i = 0; i < N; i++) {
 		temp[i] = 0;
@@ -286,7 +286,7 @@ double* MulVecToMatrix(int N, double* A[], double b[]) {
 	return temp;
 }
 
-double ScalarMul(int N, double temp[], double r[]) {
+double SclarMl(int N, double temp[], double r[]) {
 	double k = 0;
 	for (int i = 0; i < N; i++) {
 		k += temp[i] * r[i];
@@ -309,7 +309,7 @@ void prokopenkods::lab9()
 	do {
 		double sum1 = 0, sum2 = 0;
 		lambda_k = lambda_k1;
-		x_ = MulVecToMatrix(N, A, x);
+		x_ = MulVecToMx(N, A, x);
 
 		for (int i = 0; i < N; i++) {
 			sum1 += x_[i];
@@ -317,7 +317,7 @@ void prokopenkods::lab9()
 		}
 
 		lambda_k1 = sum1 / sum2;
-		k = sqrt(ScalarMul(N, x_, x_));
+		k = sqrt(SclarMl(N, x_, x_));
 		for (int i = 0; i < N; i++) {
 			x[i] = x_[i] / k;
 		}
