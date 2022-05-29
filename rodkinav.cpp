@@ -232,7 +232,49 @@ void rodkinav::lab7()
  */
 void rodkinav::lab8()
 {
-
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++)
+			if (A[i][j] != A[j][i]) return;
+	}
+	double** B = new double* [N];
+	double t = 2;
+	int maxi, maxj;
+	for (int i = 0; i < N; i++) B[i] = new double[N];
+	while (t > 1) 
+	{
+		maxi = 0, maxj = 1;
+		for (int i = 0; i < N; i++) 
+		{
+			for (int j = 0; j < N; j++) 
+			{
+				if (i == j) continue;
+				if (fabs(A[i][j]) > fabs(A[maxi][maxj])) 
+				{
+					maxi = i;
+					maxj = j;
+				}
+			}
+		}
+		double phi = atan(2 * A[maxi][maxj] / (-A[maxi][maxi] + A[maxj][maxj])) / 2;
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) B[i][j] = A[i][j];
+		}
+		for (int r = 0; r < N; r++) {
+			B[r][maxi] = A[r][maxi] * cos(phi) - A[r][maxj] * sin(phi);
+			B[r][maxj] = A[r][maxi] * sin(phi) + A[r][maxj] * cos(phi);
+		}
+		for (int c = 0; c < N; c++) {
+			A[maxi][c] = B[maxi][c] * cos(phi) - B[maxj][c] * sin(phi);
+			A[maxj][c] = B[maxi][c] * sin(phi) + B[maxj][c] * cos(phi);
+		}
+		A[maxi][maxj] = 0;
+		t = 0;
+		for (int i = 0; i < N; i++) {
+			for (int j = i + 1; j < N; j++)
+				t += A[i][j] * A[i][j] + A[j][i] * A[j][i];
+		}
+	}
+	for (int i = 0; i < N; i++) x[i] = A[i][i];
 }
 
 
@@ -241,7 +283,35 @@ void rodkinav::lab8()
  */
 void rodkinav::lab9()
 {
-
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++)
+			if (A[i][j] != A[j][i]) return;
+	}
+	double l, maxl = 0;
+	bool cont = true;
+	double* y = new double[N];
+	double* y_prev = new double[N];
+	for (int i = 0; i < N; i++) y_prev[i] = 1;
+	while (cont) {
+		cont = false;
+		for (int i = 0; i < N; i++) {
+			y[i] = 0;
+			for (int j = 0; j < N; j++) {
+				y[i] += A[i][j] * y_prev[j];
+			}
+		}
+		l = 0;
+		for (int i = 0; i < N; i++) {
+			if (fabs(y[i]) > 1E-3 && fabs(y_prev[i]) > 1E-3) {
+				l = y[i] / y_prev[i];
+				break;
+			}
+		}
+		if (fabs(l - maxl) > 1E-3) cont = true;
+		maxl = l;
+		for (int i = 0; i < N; i++) y_prev[i] = y[i];
+	}
+	cout << "The largest lambda: " << maxl << endl;
 }
 
 
