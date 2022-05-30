@@ -193,44 +193,123 @@ void kochetkovpa::lab5()
  */
 void kochetkovpa::lab6()
 {
-    double norm = 1e-1;
-    double rk[N];
-    init_matrix(rk, N);
+	double* x1 = new double[N];	
+	double* r = new double[N];	
+	double* Ar = new double[N];	
+	double Ar2 = 0;
+	double Arr = 0;
+	double t = 0;	
+	double norma = 0;	
+	int i, j;
 
-    for (int i = 0; i < N; ++i)
-    {
-        x[i] = 1e-2;
-    }
+	for (i = 0; i < N; i++)
+	{
+		x[i] = b[i];
+		x1[i] = 0;
+		Ar[i] = 0;
+	}
 
-    do
-    {
-        double *Ax = MatrixMultOnVect(A, x, N);
+	for (i = 0; i < N; i++)
+	{
+		r[i] = b[i];
+		for (j = 0; j < N; j++)
+		{
+			r[i] -= A[i][j] * x[j];
+		}
+	}
 
-        for (int i = 0; i < N; ++i)
-        {
-            rk[i] = Ax[i] - b[i];
-        }
+	for (i = 0; i < N; i++)
+	{
+		for (j = 0; j < N; j++)
+		{
+			Ar[i] += A[i][j] * r[j];
+		}
+	}
 
-        double *Ar = MatrixMultOnVect(A, rk, N);
-        double tau = 0;
+	for (i = 0; i < N; i++)
+	{
+		Ar2 += Ar[i] * Ar[i];
+		Arr += Ar[i] * r[i];
+	}
 
-        tau = (scalar(Ar, rk, N) / scalar(Ar, Ar, N));
+	t = -Arr / Ar2;
 
-        for (int i = 0; i < N; i++)
-        {
-            double prevX = x[i];
-            x[i] = prevX - tau * rk[i];
+	for (i = 0; i < N; i++)
+	{
+		x1[i] = x[i] - t * r[i];
+	}
 
-            if (fabs(x[i] - prevX) < norm)
-            {
-                norm = fabs(x[i] - prevX);
-            }
-        }
+	norma = abs(x1[0] - x[0]);
+	for (i = 1; i < N; i++)
+	{
+		if ((abs(x1[i] - x[i])) > norma)
+		{
+			norma = abs(x1[i] - x[i]);
+		}
+	}
 
-        delete[] Ar;
-        delete[] Ax;
+	while (norma > eps)
+	{
+		for (i = 0; i < N; i++)
+		{
+			x[i] = x1[i];
+			x1[i] = 0;
+			Ar[i] = 0;
+			r[i] = 0;
+		}
+		Ar2 = 0;
+		Arr = 0;
+		t = 0;
+		norma = 0;
 
-    } while (sqrt(norm) >= eps);
+		for (i = 0; i < N; i++)
+		{
+			r[i] = b[i];
+			for (j = 0; j < N; j++)
+			{
+				r[i] -= A[i][j] * x[j];
+			}
+		}
+
+		for (i = 0; i < N; i++)
+		{
+			for (j = 0; j < N; j++)
+			{
+				Ar[i] += A[i][j] * r[j];
+			}
+		}
+
+		for (i = 0; i < N; i++)
+		{
+			Ar2 += Ar[i] * Ar[i];
+			Arr += Ar[i] * r[i];
+		}
+
+		t = -Arr / Ar2;
+
+		for (i = 0; i < N; i++)
+		{
+			x1[i] = x[i] - t * r[i];
+		}
+
+		norma = abs(x1[0] - x[0]);
+		for (i = 1; i < N; i++)
+		{
+			if ((abs(x1[i] - x[i])) > norma)
+			{
+				norma = abs(x1[i] - x[i]);
+			}
+		}
+	}
+
+	for (i = 0; i < N; i++)
+	{
+		x[i] = x1[i];
+	}
+
+	delete[]x1;
+	delete[]r;
+	delete[]Ar;
 }
 
 
