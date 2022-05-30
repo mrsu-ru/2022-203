@@ -14,8 +14,36 @@ void bugreevaam::lab1()
  */
 void bugreevaam::lab2()
 {
+    int i, j, k, max;
+    for (i = 0; i < N; b[i] = -b[i], i++)
 
+        for (i = 0; i < N; i++) {
+            max = i;
+            double* s; double s1;
+            for (j = i + 1; j < N; j++) if (A[j][i] * A[j][i] > A[max][i] * A[max][i]) max = j;
+            if (max != i) {
+                s = A[i]; s1 = b[i];
+                A[i] = A[max]; b[i] = b[max];
+                A[max] = s; b[max] = s1;
+            }
+            for (j = N - 1; j > i; A[i][j] /= A[i][i], j--);
+            b[i] /= A[i][i];
+            A[i][i] = 1;
+            for (j = N - 1; j > i; j--) {
+                for (k = i + 1; k < N; A[j][k] -= A[i][k] * A[j][i], k++);
+                b[j] -= b[i] * A[j][i];
+                A[j][i] = 0;
+            }
+        }
+    double sum;
+    x[N - 1] = b[N - 1];
+    for (i = N - 2; i >= 0; i--) {
+        sum = 0;
+        for (j = i + 1; j < N; j++) sum += x[j] * A[i][j];
+        x[i] = b[i] - sum;
+    }
 }
+
 
 
 
@@ -24,7 +52,28 @@ void bugreevaam::lab2()
  */
 void bugreevaam::lab3()
 {
+    double* alpha;
+    alpha = new double[N];
 
+    double* beta;
+    beta = new double[N];
+
+    int i;
+
+    alpha[0] = A[0][1] / A[0][0];
+
+    beta[0] = b[0] / A[0][0];
+
+    for (i = 1; i < N; i++) {
+        alpha[i] = A[i][i + 1] / (A[i][i] - A[i][i - 1] * alpha[i - 1]);
+        beta[i] = (b[i] - beta[i - 1] * A[1][0]) / (A[i][i] - A[i][i - 1] * alpha[i - 1]);
+    }
+
+    x[N - 1] = beta[N - 1];
+
+    for (i = N - 2; i >= 0; i--) {
+        x[i] = beta[i] - alpha[i] * x[i + 1];
+    }
 }
 
 
@@ -34,7 +83,7 @@ void bugreevaam::lab3()
  */
 void bugreevaam::lab4()
 {
-
+    
 }
 
 
@@ -88,5 +137,5 @@ void bugreevaam::lab9()
 
 std::string bugreevaam::get_name()
 {
-  return "R.V. Zhalnin";
+  return "A.M.Bugreeva";
 }
