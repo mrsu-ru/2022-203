@@ -69,7 +69,33 @@ void denisovrv::lab3()
  */
 void denisovrv::lab4()
 {
-
+    double** L = new double* [N];
+    for (int i = 0; i < N; i++) {
+        L[i] = new double[N];
+        for (int j = 0; j < N; j++) L[i][j] = 0;
+    }
+    for (int i = 0; i < N; i++) {
+        for (int j = i; j < N; j++) {
+            if (j == i) {
+                for (int l = 0; l < i; l++) A[i][i] -= L[l][i] * L[l][i];
+                L[i][i] = sqrt(A[i][i]);
+            }
+            else {
+                for (int l = 0; l < j; l++) A[i][j] -= L[l][i] * L[l][j];
+                L[i][j] = A[i][j] / L[i][i];
+            }
+        }
+    }
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < i; j++) b[i] -= L[j][i] * b[j];
+        b[i] /= L[i][i];
+    }
+    for (int i = N - 1; i >= 0; i--) {
+        for (int j = i + 1; j < N; j++) b[i] -= L[i][j] * x[j];
+        x[i] = b[i] / L[i][i];
+    }
+    for (int i = 0; i < N; i++) delete[] L[i];
+    delete[] L;
 }
 
 
@@ -79,7 +105,19 @@ void denisovrv::lab4()
  */
 void denisovrv::lab5()
 {
-
+    double norm, sum, appr;
+    double eps = 1.e-15;
+    for (int i = 0; i < N; ++i) x[i] = b[i];
+    do {
+        norm = 0;
+        for (int i = 0; i < N; i++) {
+            sum = 0;
+            for (int j = 0; j < N; j++) if (i != j) sum += A[i][j] * x[j];
+            appr = (b[i] - sum) / A[i][i];
+            if (norm < (abs(appr - x[i]))) norm = (abs(appr - x[i]));
+            x[i] = appr;
+        }
+    } while (norm >= eps);
 }
 
 
