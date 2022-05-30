@@ -14,6 +14,32 @@ void makarovaayu::lab1()
  */
 void makarovaayu::lab2()
 {
+    for (int i = 0; i < N; i++) {
+        int maxLine = i;
+        for (int j = i + 1; j < N; j++) {
+            if (abs(A[j][i]) > abs(A[maxLine][i])) {
+                maxLine = j;
+            }
+        }
+        if (i != maxLine) {
+            swap(A[maxLine], A[i]);
+            swap(b[maxLine], b[i]);
+        }
+        for (int j = i + 1; j < N; j++) {
+            double c = A[j][i] / A[i][i];
+            for (int k = i; k < N; k++) {
+                A[j][k] -= (c * A[i][k]);
+            }
+            b[j] -= (c * b[i]);
+        }
+    }
+
+    for (int i = N - 1; i >= 0; i--) {
+        for (int j = i + 1; j < N; j++) {
+            b[i] -= (A[i][j] * x[j]);
+        }
+        x[i] = b[i] / A[i][i];
+    }
 
 }
 
