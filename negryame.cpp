@@ -257,7 +257,51 @@ void negryame::lab8()
  */
 void negryame::lab9()
 {
+	double eps = 1.e-20;
+	
+	for (int i = 0; i < N; i++) {
+		x[i] = 0.;
+	}
+	x[0] = 1.;
 
+	
+	double* z = new double[N];
+    double result = 0.;
+
+	while (true) {
+		
+		for (int i = 0; i < N; i++) {
+			z[i] = 0.;
+			for (int j = 0; j < N; j++) {
+				z[i] += (A[i][j] * x[j]);
+			}
+		}
+
+		
+		double num = 0.;
+		double den = 0.;
+		for (int i = 0; i < N; i++) {
+			num += (z[i] * x[i]);
+			den += (x[i] * x[i]);
+		}
+		double temp = result;
+		result = num / den;
+
+		
+		if (std::abs(temp - result) < eps ) {
+			break;
+		}
+
+		
+		double norma = sqrt(den);
+		for (int i = 0; i < N; i++) {
+			x[i] = z[i] / norma;
+		}
+	}
+
+	std::cout << result << std::endl;
+
+	delete[] z;
 }
 
 
