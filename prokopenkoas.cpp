@@ -335,7 +335,7 @@ void prokopenkoas::lab8()
 
         double** t_A = MulMatricaa(t_H, A, N);
 
-        A = MulMatrixes(t_A, m_H, N);
+        A = MulMatricaa(t_A, m_H, N);
     } while (MaxEl >= eps);
 
     for (int i = 0; i < N; ++i) {
