@@ -374,13 +374,92 @@ void ryabikinks::lab7()
     delete[] bufferAr;
 }
 
-
+void MultMatrix(double** A, double** B, double** C, double eps, int N) {
+	for (int i = 0; i < N; ++i) {
+		for (int j = 0; j < N; ++j) {
+			C[i][j] = 0;
+			for (int k = 0; k < N; ++k) {
+				C[i][j] += A[i][k] * B[k][j];
+				if (abs(C[i][j]) < eps) {
+					C[i][j] = 0.0;
+				}
+			}
+		}
+	}
+}
+void BinaryMatrix(double** A, int N) {
+	for (int i = 0; i < N; ++i) {
+		for (int j = 0; j < N; ++j) {
+			if (i == j) {
+				A[i][j] = 1;
+			}
+			else {
+				A[i][j] = 0;
+			}
+		}
+	}
+}
 /**
  * Метод вращения для нахождения собственных значений матрицы
  */
 void ryabikinks::lab8()
 {
+	int const N = 10;
+	double eps = 1e-4;
+	double epsilon = 1;
 
+	double maxEl;
+	do {
+		maxEl = 0.0;
+		int i0, j0;
+		for (int i = 0; i < N; ++i) {
+			for (int j = 0; j < N; ++j) {
+				if (i == j) {
+					continue;
+				}
+				if (fabs(A[i][j]) > maxEl) {
+					maxEl = fabs(A[i][j]);
+					i0 = i;
+					j0 = j;
+				}
+			}
+		}
+		double phi = 0.5 * atan((2 * A[i0][j0]) / (A[i0][i0] - A[j0][j0]));
+		double sinus = sin(phi);
+		double cosine = cos(phi);
+		double** buffer = new double*[N];
+		for (int i = 0; i < N; ++i) {
+			buffer[i] = new double[N];
+		}
+		BinaryMatrix(buffer, N);
+
+		buffer[i0][i0] = cosine;
+		buffer[i0][j0] = -sinus;
+		buffer[j0][i0] = sinus;
+		buffer[j0][j0] = cosine;
+
+		double** bufferT = new double*[N];
+		for (int i = 0; i < N; i++) {
+			bufferT[i] = new double[N];
+		}
+
+		fuller(bufferT, N);
+		MatrixTransposition(buffer, bufferT, N);
+
+		double** IntermediateMatrix = new double*[N];
+		for (int i = 0; i < N; i++) {
+			IntermediateMatrix[i] = new double[N];
+		}
+		fuller(IntermediateMatrix, N);
+
+		MultMatrix(bufferT, A, IntermediateMatrix, eps, N);
+	
+		MultMatrix(IntermediateMatrix, buffer, A, eps, N);
+	
+	} while (maxEl >= epsilon);
+	for (int i = 0; i < N; ++i) {
+		x[i] = A[i][i];
+	}
 }
 
 
