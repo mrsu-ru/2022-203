@@ -404,7 +404,6 @@ void BinaryMatrix(double** A, int N) {
  */
 void ryabikinks::lab8()
 {
-	int const N = 10;
 	double eps = 1e-10;
 	double epsilon = 1e-3;
 
@@ -467,7 +466,39 @@ void ryabikinks::lab8()
  */
 void ryabikinks::lab9()
 {
+    double eps = 1e-17;
+    double Lambda;
+    double LambdaMax = 0;
+    double* x1 = new double[N];
+    double koef;
+    for (int i = 0; i < N; i++)
+    {
+        x[i] = b[i];
+    }
 
+    do
+    {
+        Lambda = LambdaMax;
+        x1 = MultMatrixVect(A, x, N);
+        double sum1 = 0, sum2 = 0;
+        for (int i = 0; i < N; i++)
+        {
+            sum1 += x1[i];
+            sum2 += x[i];
+        }
+
+        LambdaMax = sum1 / sum2;
+        koef = sqrt(ScalarProduct(x1, x1, N));
+        for (int i = 0; i < N; i++)
+        {
+            x[i] = x1[i] / koef;
+        }
+
+    } while (abs(LambdaMax - Lambda) >= eps);
+
+    delete[] x1;
+
+    cout << "Max Lambda " << LambdaMax << endl;
 }
 
 
