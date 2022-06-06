@@ -88,5 +88,5 @@ void timovkinayu::lab9()
 
 std::string timovkinayu::get_name()
 {
-  return "R.V. Zhalnin";
+  return "A.YU. Timovkin";
 }
