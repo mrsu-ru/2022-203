@@ -142,11 +142,73 @@ void kaderovro::lab5()
 
 
 
+double multOnSkaclar(double* A, double* B, int N)
+{
+	double res = 0;
+	for (int i = 0; i < N; ++i)
+	{
+		res += A[i] * B[i];
+	}
+	return res;
+}
+
+
+double* multOnVector(double** A, double* V, int N)
+{
+	double* res = new double[N];
+	for (int i = 0; i < N; ++i)
+	{
+		res[i] = 0;
+		for (int j = 0; j < N; ++j) res[i] += A[i][j] * V[j];
+	}
+	return res;
+}
+
 /**
  * Метод минимальных невязок
  */
 void kaderovro::lab6()
 {
+	double norm = 1e-1;
+	
+	double eps = 1.e-15;
+	double* L = new double [N];
+	for (int i = 0; i < N; i++) L[i] = 0;
+
+	for (int i = 0; i < N; ++i)
+	{
+		x[i] = 1e-2;
+	}
+
+	do
+	{
+		double* Ax = multOnVector(A, x, N);
+
+		for (int i = 0; i < N; ++i)
+		{
+			L[i] = Ax[i] - b[i];
+		}
+
+		double* Ar = multOnVector(A, L, N);
+		double tau = 0;
+
+		tau = (multOnSkaclar(Ar, L, N) / multOnSkaclar(Ar, Ar, N));
+
+		for (int i = 0; i < N; i++)
+		{
+			double prevX = x[i];
+			x[i] = prevX - tau * L[i];
+
+			if (fabs(x[i] - prevX) < norm)
+			{
+				norm = fabs(x[i] - prevX);
+			}
+		}
+
+		delete[] Ar;
+		delete[] Ax;
+
+	} while (sqrt(norm) >= eps);
 
 }
 
@@ -166,6 +228,62 @@ void kaderovro::lab7()
  */
 void kaderovro::lab8()
 {
+	double eps = 1e-20;
+	double** B = new double* [N];
+	for (int i = 0; i < N; i++) {
+		B[i] = new double[N];
+	}
+
+	while (true) {
+		double norm = 0;
+		int imax = 0;
+		int jmax = 1;
+		for (int i = 0; i < N; i++) {
+			for (int j = i + 1; j < N; j++) {
+				if (abs(A[i][j]) > abs(A[imax][jmax])) {
+					imax = i;
+					jmax = j;
+				}
+				norm += A[i][j] * A[i][j];
+			}
+		}
+
+		if (sqrt(norm) < eps) {
+			break;
+		}
+
+		double fi = 0.5 * atan(2 * A[imax][jmax] / (A[imax][imax] - A[jmax][jmax]));
+
+		for (int i = 0; i < N; i++) {
+			B[i][imax] = A[i][imax] * cos(fi) + A[i][jmax] * sin(fi);
+			B[i][jmax] = A[i][jmax] * cos(fi) - A[i][imax] * sin(fi);
+		}
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				if (j != imax && j != jmax) {
+					B[i][j] = A[i][j];
+				}
+			}
+		}
+
+		for (int j = 0; j < N; j++) {
+			A[imax][j] = B[imax][j] * cos(fi) + B[jmax][j] * sin(fi);
+			A[jmax][j] = B[jmax][j] * cos(fi) - B[imax][j] * sin(fi);
+		}
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				if (i != imax && i != jmax) {
+					A[i][j] = B[i][j];
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < N; i++) {
+		x[i] = A[i][i];
+	}
 
 }
 
@@ -175,7 +293,43 @@ void kaderovro::lab8()
  */
 void kaderovro::lab9()
 {
+	double AbsMaxEigenvalue;
+	double Eigenvalue = 0.;
+	double eps = 1e-8;
+	double* xPrev = new double[N];
+	double* xNew = new double[N];
 
+	for (int i = 0; i < N; ++i)
+	{
+		xPrev[i] = b[i];
+	}
+
+	do
+	{
+		AbsMaxEigenvalue = Eigenvalue;
+
+		xNew = multOnVector(A, xPrev, N);
+
+		double s1 = 0, s2 = 0;
+		for (int i = 0; i < N; ++i)
+		{
+			s1 += xNew[i];
+			s2 += xPrev[i];
+		}
+
+		Eigenvalue = s1 / s2;
+
+		for (int i = 0; i < N; ++i)
+		{
+			xPrev[i] = xNew[i] / multOnSkaclar(xNew, xNew, N);
+		}
+
+	} while (fabs(AbsMaxEigenvalue - Eigenvalue) >= eps);
+
+	delete[] xNew;
+	delete[] xPrev;
+
+	cout << "Absolute max eigenvalue = " << AbsMaxEigenvalue << endl;
 }
 
 

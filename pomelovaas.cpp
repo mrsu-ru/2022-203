@@ -165,18 +165,92 @@ void pomelovaas::lab4()
  */
 void pomelovaas::lab5()
 {
+    double norm, sum;
+    double eps = 1.e-15;
+    for (int i = 0; i < N; ++i) x[i] = b[i];
 
+    do {
+        norm = 0;
+        for (int i = 0; i < N; i++) {
+            sum = 0;
+            for (int j = 0; j < N; j++) {
+                if (i != j) sum += A[i][j] * x[j];
+            }
+            sum = (b[i] - sum) / A[i][i];
+            if (norm < (fabs(sum - x[i]))) {
+                norm = (fabs(sum - x[i]));
+            }
+            x[i] = sum;
+        }
+    } while (norm >= eps);
 }
 
 
+double *MulVecToMat(int N, double *A[], double b[]) {
+    double *temp = new double[N];
+    for (int i = 0; i < N; i++) {
+        temp[i] = 0;
+        for (int j = 0; j < N; j++) {
+            temp[i] += A[i][j] * b[i];
+        }
+    }
+    return temp;
+}
+
+double ScMul(int N, double temp[], double r[]) {
+    double k = 0;
+    for (int i = 0; i < N; i++) {
+        k += temp[i] * r[i];
+    }
+    return k;
+}
 
 /**
  * Метод минимальных невязок
  */
 void pomelovaas::lab6()
 {
+    double *r = new double[N];
+    double *xk = new double[N];
+    double eps = 1.e-17;
+    double *x1 = b;
+    double t;
+    double maxDelta;
+    do {
+        double *temp = MulVecToMat(N, A, x1);
 
+        for (int i = 0; i < N; i++) {
+            r[i] = temp[i] - b[i];
+        }
+        double *Ar = MulVecToMat(N, A, r);
+
+        double Scalar1, Scalar2;
+        Scalar1 = ScMul(N, Ar, r);
+        Scalar2 = ScMul(N, Ar, Ar);
+        t = Scalar1 / Scalar2;
+
+        for (int i = 0; i < N; i++) {
+            xk[i] = x1[i] - t * r[i];
+        }
+        maxDelta = abs(xk[0] - x1[0]);
+
+        for (int i = 1; i < N; i++) {
+            double delta = abs(xk[i] - x1[i]);
+            if (delta > maxDelta) {
+                maxDelta = delta;
+            }
+        }
+        x1 = xk;
+
+    } while (maxDelta > eps);
+
+    for (int i = 0; i < N; i++) {
+        x[i] = x1[i];
+    }
+    delete[] r;
+    delete[] xk;
 }
+
 
 
 
@@ -194,7 +268,49 @@ void pomelovaas::lab7()
  */
 void pomelovaas::lab8()
 {
+double t = 2;
+    int maxi, maxj;
+    double **B = new double *[N];
+    for (int i = 0; i < N; i++) B[i] = new double[N];
 
+    for(int i = 0; i < N; i++){
+        for(int j = 0; j < N; j++)
+            if(A[i][j] != A[j][i]) return;
+    }
+
+    while (t > 1) {
+        maxi = 0, maxj = 1;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if (i == j) continue;
+                if (fabs(A[i][j]) > fabs(A[maxi][maxj])) {
+                    maxi = i;
+                    maxj = j;
+                }
+            }
+        }
+        double phi = atan(2 * A[maxi][maxj] / (-A[maxi][maxi] + A[maxj][maxj])) / 2;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) B[i][j] = A[i][j];
+        }
+        for (int r = 0; r < N; r++) {
+            B[r][maxi] = A[r][maxi] * cos(phi) - A[r][maxj] * sin(phi);
+            B[r][maxj] = A[r][maxi] * sin(phi) + A[r][maxj] * cos(phi);
+        }
+        for (int c = 0; c < N; c++) {
+            A[maxi][c] = B[maxi][c] * cos(phi) - B[maxj][c] * sin(phi);
+            A[maxj][c] = B[maxi][c] * sin(phi) + B[maxj][c] * cos(phi);
+        }
+        A[maxi][maxj] = 0;
+        t = 0;
+        for (int i = 0; i < N; i++) {
+            for (int j = i + 1; j < N; j++)
+                t += A[i][j] * A[i][j] + A[j][i] * A[j][i];
+        }
+    }
+    for (int i = 0; i < N; i++) x[i] = A[i][i];
+    for (int i = 0; i < N; i++) delete[] B[i];
+    delete[] B;
 }
 
 
@@ -203,7 +319,44 @@ void pomelovaas::lab8()
  */
 void pomelovaas::lab9()
 {
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++)
+            if (A[i][j] != A[j][i])
+                return;
+    }
 
+    double l, maxl = 0;
+    bool flag = true;
+    double *y = new double[N];
+    double *y_prev = new double[N];
+
+    for (int i = 0; i < N; i++)
+        y_prev[i] = 1;
+
+    while (flag) {
+        flag = false;
+        for (int i = 0; i < N; i++) {
+            y[i] = 0;
+            for (int j = 0; j < N; j++) {
+                y[i] += A[i][j] * y_prev[j];
+            }
+        }
+        l = 0;
+        for (int i = 0; i < N; i++) {
+            if (fabs(y[i]) > 1E-3 && fabs(y_prev[i]) > 1E-3) {
+                l = y[i] / y_prev[i];
+                break;
+            }
+        }
+        if (fabs(l - maxl) > 1E-3)
+            flag = true;
+        maxl = l;
+        for (int i = 0; i < N; i++)
+            y_prev[i] = y[i];
+    }
+    cout << "lambda: " << maxl << endl;
+    delete[] y;
+    delete[] y_prev;
 }
 
 

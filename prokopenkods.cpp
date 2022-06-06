@@ -163,7 +163,34 @@ void prokopenkods::lab5()
  */
 void prokopenkods::lab6()
 {
-
+	const double EPS = 1e-19;
+	double z = 1e9;
+	const int n = N;
+	double r[n];
+	int iter;
+	for (iter = 0; z > EPS; iter++) {
+		z = 0;
+		for (int i = 0; i < n; i++) {
+			r[i] = -b[i];
+			for (int j = 0; j < n; j++) {
+				r[i] += A[i][j] * x[j];
+			}
+		}
+		double tlower = 0, tupper = 0;
+		for (int i = 0; i < n; i++) {
+			double temp = 0;
+			for (int j = 0; j < n; j++) {
+				temp += A[i][j] * r[j];
+			}
+			tlower += temp * temp;
+			tupper += temp * r[i];
+		}
+		double t = tupper / tlower;
+		for (int i = 0; i < n; i++) {
+			if (z < abs(t * r[i])) z = abs(t * r[i]);
+			x[i] -= t * r[i];
+		}
+	}
 }
 
 
@@ -182,16 +209,122 @@ void prokopenkods::lab7()
  */
 void prokopenkods::lab8()
 {
+	const double eps = 1e-15;
+	double** C = new double* [N];
+	for (int i = 0; i < N; i++) C[i] = new double[N];
 
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			C[i][j] = A[i][j];
+		}
+	}
+
+	double norm = 1e9;
+	int iter;
+	for (iter = 0; norm > eps; iter++) {
+		int k = 1, l = 2;
+		for (int i = 0; i < N; i++) {
+			for (int j = i + 1; j < N; j++) {
+				if (abs(A[k][l]) < abs(A[i][j])) {
+					k = i;
+					l = j;
+				}
+			}
+		}
+
+		double phi;
+		if (fabs(A[k][k]-A[l][l]) < eps) {
+			phi = atan(1);
+		}
+		else {
+			phi = 0.5*atan(2*A[k][l]/(A[l][l]-A[k][k]));
+		}
+
+		double s = sin(phi);
+		double c = cos(phi);
+
+		C[k][k] = c*c*A[k][k]-2*s*c*A[k][l]+s*s*A[l][l]; // cos^2-2sincos+sin^2 = ajj
+		C[l][l] = s*s*A[k][k]+2*s*c*A[k][l]+c*c*A[l][l]; // sin^2+2sincos+cos^2 = aii
+		C[k][l] = C[l][k] = (c*c-s*s)*A[k][l]+s*c*(A[k][k]-A[l][l]); // cos^2-sin^2+sincos = aji
+
+
+		for (int i = 0; i < N; i++) {
+			if (i == k || i == l) continue;
+
+			C[k][i] = C[i][k] = c*A[k][i]-s*A[l][i];
+			C[l][i] = C[i][l] = s*A[k][i]+c*A[l][i];
+		}
+
+		norm = 0;
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				A[i][j] = C[i][j];
+				if (i < j) norm += A[i][j] * A[i][j];
+			}
+		}
+	}
+
+
+	for (int i = 0; i < N; i++) {
+		x[i] = A[i][i];
+	}
+
+	for (int i = 0; i < N; i++) {
+		delete[] C[i];
+	}
+	delete[] C;
 }
-
 
 /**
  * Нахождение наибольшего по модулю собственного значения матрицы
  */
 void prokopenkods::lab9()
 {
+	const double eps = 1e-3;
 
+	double* yPrev = new double[N];
+	for (int i = 0; i < N; i++)
+		yPrev[i] = 1;
+
+	double* y = new double[N];
+
+	int iter;
+	double delta = 1e9;
+	double lambdaMax = 0;
+
+	for (iter = 0; delta > eps; iter++) {
+		for (int i = 0; i < N; i++) {
+			y[i] = 0;
+			for (int j = 0; j < N; j++) {
+				y[i] += A[i][j] * yPrev[j];
+			}
+		}
+
+		double sum1 = 0, sum2 = 0;
+		for (int i = 0; i < N; ++i) {
+			sum1 += y[i];
+			sum2 += yPrev[i];
+		}
+		double lambda = sum1 / sum2;
+		delta = fabs(lambda - lambdaMax);
+		lambdaMax = lambda;
+
+		for (int i = 0; i < N; i++) {
+			yPrev[i] = y[i];
+		}
+		double r = 0;
+		for (int i = 0; i < N; i++) {
+			r += y[i] * y[i];
+		}
+		r = sqrt(r);
+		for (int i = 0; i < N; ++i) {
+			y[i] /= r;
+		}
+	}
+	printf("Max Eigen value -- %.4f\n", lambdaMax);
+
+	delete[]yPrev;
+	delete[]y;
 }
 
 
