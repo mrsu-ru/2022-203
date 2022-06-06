@@ -253,68 +253,54 @@ void fedinda::lab7()
  */
 void fedinda::lab8()
 {
-	double err = 0;
-	double** C = new double*[N];
+	double t = 1;
+	double** B = new double* [N];
+	B[0] = new double[N * N];
+	for (int i = 0; i < N; i++)
+		B[i] = B[0] + i * N;
 
-	for (int i = 0; i < N; i++){
-		C[i] = new double[N];
-	}
-
-
-	for (int i = 0; i < N; i++){
-		for (int j = i+1; j < N; j++){
-    			if(i!=j){ 
-      				err+=A[i][j]* A[i][j];
-   			}
-    			C[i][j] = 0;
-  		}
-	}
-
-	while (sqrt(err) > eps){
-		int mI = 0, mJ = 1;
+	while (t > eps) {
+		int i_fix = 1;
+		int j_fix = 0;
 		for (int i = 0; i < N; i++)
-			for (int j = i+1; j<N; j++)
-				if ( abs(A[i][j]) > abs(A[mI][mJ]) ){
-  	    				mI = i; mJ = j;	
+			for (int j = 0; j < i; j++)
+				if (abs(A[i][j]) > abs(A[i_fix][j_fix])) {
+					i_fix = i;
+					j_fix = j;
 				}
 
-	double phi;
-  	if(A[mI][mI]!= A[mJ][mJ]){
-    		phi = 0.5*atan(2*A[mI][mJ]/(A[mI][mI] - A[mJ][mJ]));
- 	}else{phi = M_PI/4;}
-	double c = cos(phi), s = sin(phi);
- 
-	C[mI][mI] = pow(c, 2)*A[mI][mI] - 2*s*c*A[mI][mJ] + pow(s, 2)*A[mJ][mJ];
-	C[mJ][mJ] = pow(s, 2)*A[mI][mI] + 2*s*c*A[mI][mJ] + pow(c, 2)*A[mJ][mJ];
-	C[mI][mJ] = (pow(c, 2) - pow(s, 2))*A[mI][mJ] + s*c*(A[mJ][mJ] - A[mI][mI]);
-	C[mJ][mI] = C[mI][mJ];
-	
-	for (int k = 0; k < N; k++){
-		if (k != mI  &&  k != mJ){
-	  		C[mI][k] = c*A[mI][k] - s*c*A[mJ][k];
-	  		C[k][mI] = C[mI][k];
-	  		C[mJ][k] = s*A[mI][k] + c*A[mJ][k];
-	  		C[k][mJ] = C[mJ][k];
-		} 
-		for (int l = 0; l < N; l++)
-	    		if (k != mI && k != mJ && l != mI && l != mJ) 
-				C[k][l] = A[k][l];	  
+		double phi = 0.5 * atan(2 * A[i_fix][j_fix] / (A[i_fix][i_fix] - A[j_fix][j_fix]));
+
+		for (int i = 0; i < N; i++)
+			for (int j = 0; j < N; j++)
+				B[i][j] = A[i][j];
+
+		for (int i = 0; i < N; i++)
+		{
+			B[i][i_fix] = A[i][i_fix] * cos(phi) + A[i][j_fix] * sin(phi);
+			B[i][j_fix] = A[i][j_fix] * cos(phi) - A[i][i_fix] * sin(phi);
+		}
+		for (int i = 0; i < N; i++)
+		{
+			A[i][i_fix] = B[i][i_fix];
+			A[i][j_fix] = B[i][j_fix];
+		}
+		for (int j = 0; j < N; j++)
+		{
+			A[i_fix][j] = B[i_fix][j] * cos(phi) + B[j_fix][j] * sin(phi);
+			A[j_fix][j] = B[j_fix][j] * cos(phi) - B[i_fix][j] * sin(phi);
+		}
+		t = 0;
+		for (int i = 0; i < N; i++)
+			for (int j = 0; j < i; j++)
+				t += A[i][j] * A[i][j];
+		t *= 2;
 	}
-	
-	err = 0;
 	for (int i = 0; i < N; i++)
-        	for (int j = i+1; j < N; j++)
-  	        	if (i != j) 
-			err += C[i][j] * C[i][j]; 
+		x[i] = A[i][i];
 
-	for (int i = 0; i < N; i++)
-        	for (int j = 0; j < N; j++) 
-	  		A[i][j] = C[i][j]; 
-
-  }
-  
-  	for (int i = 0; i < N; i++) 
-  		x[i] = A[i][i];
+	delete[] B[0];
+	delete[] B;
 }
 
 
@@ -323,34 +309,42 @@ void fedinda::lab8()
  */
 void fedinda::lab9()
 {
-	int n = N;
-	double *y = new double[n];
-	double *y_next = new double[n];
-	double lyambda = 1;
-  	double lyambda_next = 0;
+	double* y = new double[N];
+	double* prev_y = new double[N];
+	double max_lambda = 0;
+	for (int i = 0; i < N; i++)
+		prev_y[i] = 1;
+	bool stop = false;
 
-  	for(int i = 0; i<n; i++)
-    		y[i] = b[i];
+	while (!stop)
+	{
+		for (int i = 0; i < N; i++)
+		{
+			y[i] = 0;
+			for (int j = 0; j < N; j++)
+				y[i] += A[i][j] * prev_y[j];
+		}
+		double tmp = max_lambda;
+		for (int i = 0; i < N; i++)
+		{
+			if (abs(y[i]) > eps && abs(prev_y[i]) > eps)
+			{
+				max_lambda = y[i] / prev_y[i];
+				break;
+			}
+		}
 
-  	do{
-  		for(int i=0; i<n; i++){
-      			for(int j=0; j<n; j++){
-        			y_next[i] += A[i][j]*y[j];
-      			}
-  		}
-  		lyambda = lyambda_next;
+		for (int i = 0; i < N; i++)
+			prev_y[i] = y[i];
 
-  		for(int i=0; i<n; i++){
-    			if(y[i]!= 0 && y_next[i] != 0){
-      				lyambda_next = y_next[i]/y[i];
-      				break;
-    			}
-  		}
-  		for (int i=0; i<n; i++)
-   			y[i]=y_next[i];
-	}while(fabs(lyambda_next - lyambda)>eps);
+		if (abs(max_lambda - tmp) < eps)
+			stop = true;
 
-	cout<<"Result: "<<lyambda_next << endl;
+	}
+	cout << "max eigenvalue: " << max_lambda;
+
+	delete[] prev_y;
+	delete[] y;
 }
 
 
