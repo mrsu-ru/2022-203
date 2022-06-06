@@ -404,21 +404,18 @@ void BinaryMatrix(double** A, int N) {
  */
 void ryabikinks::lab8()
 {
-	int const N = 10;
-	double eps = 1e-4;
-	double epsilon = 1;
+	double eps = 1e-10;
+	double epsilon = 1e-3;
 
 	double maxEl;
 	do {
 		maxEl = 0.0;
-		int i0, j0;
+		int i0 = 0, j0 = 0;
 		for (int i = 0; i < N; ++i) {
 			for (int j = 0; j < N; ++j) {
-				if (i == j) {
-					continue;
-				}
-				if (fabs(A[i][j]) > maxEl) {
-					maxEl = fabs(A[i][j]);
+				if (i == j) continue;
+				if (abs(A[i][j]) > maxEl) {
+					maxEl = abs(A[i][j]);
 					i0 = i;
 					j0 = j;
 				}
@@ -431,6 +428,7 @@ void ryabikinks::lab8()
 		for (int i = 0; i < N; ++i) {
 			buffer[i] = new double[N];
 		}
+
 		BinaryMatrix(buffer, N);
 
 		buffer[i0][i0] = cosine;
@@ -455,7 +453,7 @@ void ryabikinks::lab8()
 		MultMatrix(bufferT, A, IntermediateMatrix, eps, N);
 	
 		MultMatrix(IntermediateMatrix, buffer, A, eps, N);
-	
+
 	} while (maxEl >= epsilon);
 	for (int i = 0; i < N; ++i) {
 		x[i] = A[i][i];
@@ -468,7 +466,39 @@ void ryabikinks::lab8()
  */
 void ryabikinks::lab9()
 {
+    double eps = 1e-17;
+    double Lambda;
+    double LambdaMax = 0;
+    double* x1 = new double[N];
+    double koef;
+    for (int i = 0; i < N; i++)
+    {
+        x[i] = b[i];
+    }
 
+    do
+    {
+        Lambda = LambdaMax;
+        x1 = MultMatrixVect(A, x, N);
+        double sum1 = 0, sum2 = 0;
+        for (int i = 0; i < N; i++)
+        {
+            sum1 += x1[i];
+            sum2 += x[i];
+        }
+
+        LambdaMax = sum1 / sum2;
+        koef = sqrt(ScalarProduct(x1, x1, N));
+        for (int i = 0; i < N; i++)
+        {
+            x[i] = x1[i] / koef;
+        }
+
+    } while (abs(LambdaMax - Lambda) >= eps);
+
+    delete[] x1;
+
+    cout << "Max Lambda " << LambdaMax << endl;
 }
 
 
