@@ -275,57 +275,56 @@ void prokopenkods::lab8()
 	delete[] C;
 }
 
-double* MulVecToMx(int N, double* A[], double b[]) {
-	double* temp = new double[N];
-	for (int i = 0; i < N; i++) {
-		temp[i] = 0;
-		for (int j = 0; j < N; j++) {
-			temp[i] += A[i][j] * b[i];
-		}
-	}
-	return temp;
-}
-
-double SclarMl(int N, double temp[], double r[]) {
-	double k = 0;
-	for (int i = 0; i < N; i++) {
-		k += temp[i] * r[i];
-	}
-	return k;
-}
 /**
  * Нахождение наибольшего по модулю собственного значения матрицы
  */
 void prokopenkods::lab9()
 {
-	double eps = 1.e-15;
-	double lambda_k, lambda_k1 = 0;
-	double* x_ = new double[N];
-	double k;
-	for (int i = 0; i < N; i++) {
-		x[i] = b[i];
-	}
+	const double eps = 1e-3;
 
-	do {
+	double* yPrev = new double[N];
+	for (int i = 0; i < N; i++)
+		yPrev[i] = 1;
+
+	double* y = new double[N];
+
+	int iter;
+	double delta = 1e9;
+	double lambdaMax = 0;
+
+	for (iter = 0; delta > eps; iter++) {
+		for (int i = 0; i < N; i++) {
+			y[i] = 0;
+			for (int j = 0; j < N; j++) {
+				y[i] += A[i][j] * yPrev[j];
+			}
+		}
+
 		double sum1 = 0, sum2 = 0;
-		lambda_k = lambda_k1;
-		x_ = MulVecToMx(N, A, x);
+		for (int i = 0; i < N; ++i) {
+			sum1 += y[i];
+			sum2 += yPrev[i];
+		}
+		double lambda = sum1 / sum2;
+		delta = fabs(lambda - lambdaMax);
+		lambdaMax = lambda;
 
 		for (int i = 0; i < N; i++) {
-			sum1 += x_[i];
-			sum2 += x[i];
+			yPrev[i] = y[i];
 		}
-
-		lambda_k1 = sum1 / sum2;
-		k = sqrt(SclarMl(N, x_, x_));
+		double r = 0;
 		for (int i = 0; i < N; i++) {
-			x[i] = x_[i] / k;
+			r += y[i] * y[i];
 		}
+		r = sqrt(r);
+		for (int i = 0; i < N; ++i) {
+			y[i] /= r;
+		}
+	}
+	printf("Max Eigen value -- %.4f\n", lambdaMax);
 
-	} while (abs(lambda_k1 - lambda_k) >= eps);
-
-	cout << "Max value of Lambda = " << lambda_k1 << endl;
-	delete[] x_;
+	delete[]yPrev;
+	delete[]y;
 }
 
 
